@@ -34,10 +34,10 @@ const ModalAdd = () => {
               data-tw-dismiss="modal"
               className="btn btn-outline-secondary w-20 mr-1"
             >
-              Cancel
+              ยกเลิก
             </button>
             <button type="button" className="btn btn-primary w-20">
-              Send
+              บันทึก
             </button>
           </div>
           {/* END: Modal Footer */}
