@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CalendarCheck2 } from "lucide-react";
+import { CalendarCheck2, Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import ModalAdd from "./ModalAdd";
 
 const Appoint = () => {
   const [data, setData] = useState([1, 2, 3, 4, 5]);
@@ -9,16 +10,28 @@ const Appoint = () => {
 
   return (
     <div className="col-12 mt-6">
+      <ModalAdd />
       <div className="intro-y    h-10">
         <div className="flex  ">
           <CalendarCheck2 className="top-menu__sub-icon " size={32} />
           <span className="text-3xl  truncate ml-4">รายการนัด</span>
         </div>
-
         <br />
+        <button
+          className="btn btn-success  mr-2 mb-2"
+          data-tw-toggle="modal"
+          data-tw-target="#header-footer-modal-preview"
+        >
+          <Plus
+            className="top-menu__sub-icon "
+            size={22}
+            style={{ marginRight: 5 }}
+          />
+          บันทึกรายการนัด
+        </button>
 
-        <div className="intro-y flex items-center h-2 mt-8">
-          จำนวนการนัด
+        <div className="intro-y flex items-center h-2 mt-5">
+          จำนวนการนัด 10 รายการ
           <div
             className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-0 sm:mt-0"
             style={{ width: 150 }}
@@ -51,15 +64,6 @@ const Appoint = () => {
 
         <div className="intro-y overflow-auto lg:overflow-visible mt-2 sm:mt-0">
           <table className="table table-report sm:mt-2">
-            {/* <thead>
-              <tr>
-                <th className="whitespace-nowrap"></th>
-                <th className="whitespace-nowrap"></th>
-                <th className="text-center whitespace-nowrap w-15">วันที่รับ</th>
-                <th className="text-center whitespace-nowrap w-5">อายุ</th>
-                <th className="text-center whitespace-nowrap w-5">เตียง</th>
-              </tr>
-            </thead> */}
             <tbody style={{ marginTop: -50 }}>
               {dataPatient.map((item, i) => {
                 return (
@@ -81,7 +85,10 @@ const Appoint = () => {
 
                         <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                           <span className="mr-2"> HN : 0008262 </span> |
-                          <span className="ml-2"> AN : 6500006565 </span>
+                          <span className="ml-2">
+                            {" "}
+                            คลินิก : ศัลยกรรมกระดูก{" "}
+                          </span>
                         </div>
                       </td>
                       <td className="text-left w-24">
@@ -98,19 +105,8 @@ const Appoint = () => {
                           <span className="mr-2"> อายุ</span>
                         </div>
                       </td>
-                      <td className="text-center w-20">
-                        <span className="text-sm"> ปปปปปปป </span>
 
-                        <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                          <span className="mr-2">คลินิก</span>
-                        </div>
-                      </td>
-                      {/* <td className="w-20">
-                        <div className="py-1 px-2 rounded-full  w-10 bg-success text-white cursor-pointer font-medium">
-                          <div className="text-center"> 3C</div>
-                        </div>
-                      </td> */}
-                      <td className="table-report__action w-56">
+                      <td className="table-report__action w-32">
                         <div className="flex justify-center items-center">
                           <a className="flex items-center mr-3">
                             <svg
