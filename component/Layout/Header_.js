@@ -1,14 +1,18 @@
 import React from "react";
 import { Search, Bell } from "lucide-react";
 import Menu_ from "./Menu_";
+import Link from "next/link";
 
 const Header_ = () => {
-
   // const   pttype  = ['01','02','03']
 
   // const  test  = pttype.filter((item)=> item != '02' )
 
   // console.log(test)
+
+  const onClick = () => {
+    console.log("dd");
+  };
 
   return (
     <div>
@@ -22,7 +26,6 @@ const Header_ = () => {
               src="dist/images/logo.svg"
             />
             <span className="logo__text text-white text-lg ml-3">
-              {" "}
               SmartAppoint
             </span>
           </a>
@@ -65,21 +68,18 @@ const Header_ = () => {
                 <div className="mb-5">
                   <a className="flex items-center">
                     <div className="w-8 h-8 bg-success/20 dark:bg-success/10 text-success flex items-center justify-center rounded-full">
-                      {" "}
                       <i className="w-4 h-4" />{" "}
                     </div>
                     <div className="ml-3">Mail Settings</div>
                   </a>
                   <a className="flex items-center mt-2">
                     <div className="w-8 h-8 bg-pending/10 text-pending flex items-center justify-center rounded-full">
-                      {" "}
                       <i className="w-4 h-4" />{" "}
                     </div>
                     <div className="ml-3">Users &amp; Permissions</div>
                   </a>
                   <a className="flex items-center mt-2">
                     <div className="w-8 h-8 bg-primary/10 dark:bg-primary/20 text-primary/80 flex items-center justify-center rounded-full">
-                      {" "}
                       <i className="w-4 h-4" />{" "}
                     </div>
                     <div className="ml-3">Transactions Report</div>
@@ -205,7 +205,6 @@ const Header_ = () => {
               aria-expanded="false"
               data-tw-toggle="dropdown"
             >
-              {" "}
               <Bell
                 className="notification__icon dark:text-slate-500"
                 color="white"
@@ -368,27 +367,25 @@ const Header_ = () => {
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />
                 </li>
-                <li>
-                  <a className="dropdown-item hover:bg-white/5">
-                    {" "}
-                    <i className="w-4 h-4 mr-2" /> Profile{" "}
-                  </a>
+                <li onClick={onClick}>
+                  <Link href={"/ipd"}>
+                    <a className="dropdown-item hover:bg-white/5">
+                      <i className="w-4 h-4 mr-2" /> Profile
+                    </a>
+                  </Link>
                 </li>
                 <li>
                   <a className="dropdown-item hover:bg-white/5">
-                    {" "}
                     <i className="w-4 h-4 mr-2" /> Add Account{" "}
                   </a>
                 </li>
                 <li>
                   <a className="dropdown-item hover:bg-white/5">
-                    {" "}
                     <i className="w-4 h-4 mr-2" /> Reset Password{" "}
                   </a>
                 </li>
                 <li>
                   <a className="dropdown-item hover:bg-white/5">
-                    {" "}
                     <i className="w-4 h-4 mr-2" /> Help{" "}
                   </a>
                 </li>
@@ -397,7 +394,6 @@ const Header_ = () => {
                 </li>
                 <li>
                   <a className="dropdown-item hover:bg-white/5">
-                    {" "}
                     <i className="w-4 h-4 mr-2" /> Logout{" "}
                   </a>
                 </li>
@@ -406,7 +402,7 @@ const Header_ = () => {
           </div>
           {/* END: Account Menu */}
         </div>
-        <Menu_  />
+        <Menu_ />
       </div>
     </div>
   );

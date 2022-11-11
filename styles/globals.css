@@ -28,3 +28,39 @@ a {
     background: black;
   }
 }
+
+
+.nav.nav-link-tabs .nav-item .nav-link.active {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(var(--color-primary) / var(--tw-border-opacity));
+  font-weight: 500;
+  background-color: blanchedalmond;
+}
+
+
+.ant-notification-notice {
+  position: relative;
+  width: 384px;
+  max-width: calc(100vw - 24px * 2);
+  margin-bottom: 16px;
+  margin-left: auto;
+  padding: 16px 24px;
+  overflow: hidden;
+  line-height: 1.5715;
+  word-wrap: break-word;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%),
+    0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+  background-color: darkseagreen
+}
+
+
+.ant-modal-header {
+  padding: 16px 24px;
+  color: rgba(0, 0, 0, 0.85);
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 2px 2px 0 0;
+  background-color: aquamarine;
+}

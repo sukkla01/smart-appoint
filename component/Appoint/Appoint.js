@@ -3,33 +3,239 @@ import { CalendarCheck2, Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ModalAdd from "./ModalAdd";
+import { Button, Modal, notification } from "antd";
+import Lab from "./Lab";
+import Xray from "./Xray";
+
 
 const Appoint = () => {
   const [data, setData] = useState([1, 2, 3, 4, 5]);
+  const [formData, setFormData] = useState({ hn: "" });
   const [dataPatient, setDataPatient] = useState([1, 2, 3, 4, 5]);
+  const [open, setOpen] = useState(false);
+
+  const openNotificationWithIcon = (type) => {
+    notification[type]({
+      message: "แจ้งเตือน",
+      description: "กรุณาระบุ HN",
+      duration: 5,
+      style: { backroundColor: "#164E63" },
+    });
+  };
+
+  const title = (
+    <div>
+      <span>
+        {/* <Plus
+          className="top-menu__sub-icon "
+          size={20}
+          style={{ marginRight: 5 }}
+        /> */}
+      </span>
+      <span>บันทึกรายการนัด</span>
+    </div>
+  );
 
   return (
     <div className="col-12 mt-6">
-      <ModalAdd />
+      <style jsx>{`
+        .modalStyle2 .ant-modal-header {
+            border-radius: 20px 20px 0 0;
+            background-color: antiquewhite;
+          }
+
+        .txtRed{
+            color :  red;
+            margin-right : 10px
+        }
+      `}</style>
+
+      <Modal
+        headStyle={{ backgroundColor: 'red' }}
+        title={title}
+        // centered
+        open={open}
+        onOk={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+        width="80%"
+        className="modalStyle2"
+        okText ='บันทึก'
+        cancelText='ยกเลิก'
+
+      >
+        <div className="modal-body " style={{ marginTop: -30 }}>
+          <div className="intro-y  px-5 pt-0 ">
+            <div className="flex flex-col lg:flex-row border-b border-slate-200/200 dark:border-darkmode-600 pb-2 -mx-5">
+              <div className="flex flex-1 px-5 items-center justify-center lg:justify-start">
+                <div className="w-20 h-20 sm:w-20 sm:h-20 flex-none lg:w-20 lg:h-20 image-fit relative">
+                  <img
+                    alt="Midone - HTML Admin Template"
+                    className="rounded-full"
+                    src="dist/images/avatar.png"
+                  />
+                </div>
+                <div className="ml-5">
+                  <div className="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">
+                    นายสุจินต์ สุกกล้า
+                  </div>
+                  <div className="text-slate-500">HN : 0008262</div>
+                  <div className="text-slate-500">เพศ : ชาย อายุ : 35 ปี </div>
+                </div>
+              </div>
+              <div className="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/10 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
+                {/* <div className="font-medium text-center lg:text-left lg:mt-3 text-lg">
+              <span>AN : 650000000</span>{" "}
+              <span className="ml-4">ward : อายุรกรรมชาย</span>
+            </div> */}
+                <div className="flex flex-col justify-center items-center lg:items-start mt-0">
+                  <div className="truncate sm:whitespace-normal flex items-center mt-3">
+                    <b className="txtRed">สิทธิการรักษา : </b> บัตรทอง ท.
+                    รายได้น้อย (ในเขต)
+                  </div>
+                </div>
+              </div>
+              <div className="mt-1 lg:mt-0 flex-1 flex items-center justify-end px-5 border-t lg:border-0 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0">
+                {/* <div className="mt-3">
+              <button className="btn btn-outline-success w-24 h-24 inline-block mr-1 mb-0 text-2xl  items-center">
+                <BedSingle className="top-menu__sub-icon " size={32} />{" "}
+                <p>6401</p>
+              </button>
+            </div> */}
+                <div className="mt-3"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <ul
+              className="nav nav-link-tabs col-6 "
+              role="tablist"
+              style={{ width: 500 }}
+            >
+              <li
+                id="example-5-tab"
+                className="nav-item flex-1"
+                role="presentation"
+              >
+                <button
+                  className="nav-link w-full py-2 active"
+                  data-tw-toggle="pill"
+                  data-tw-target="#example-tab-5"
+                  type="button"
+                  role="tab"
+                  aria-controls="example-tab-5"
+                  aria-selected="true"
+                >
+                  บันทึกรายการนัด
+                </button>
+              </li>
+              <li
+                id="example-6-tab"
+                className="nav-item flex-1"
+                role="presentation"
+              >
+                <button
+                  className="nav-link w-full py-2"
+                  data-tw-toggle="pill"
+                  data-tw-target="#example-tab-6"
+                  type="button"
+                  role="tab"
+                  aria-controls="example-tab-6"
+                  aria-selected="false"
+                >
+                  สั่ง Lab ล่วงหน้า
+                </button>
+              </li>
+              <li
+                id="example-6-tab"
+                className="nav-item flex-1"
+                role="presentation"
+              >
+                <button
+                  className="nav-link w-full py-2"
+                  data-tw-toggle="pill"
+                  data-tw-target="#example-tab-7"
+                  type="button"
+                  role="tab"
+                  aria-controls="example-tab-7"
+                  aria-selected="false"
+                >
+                  สั่ง x-ray ล่วงหน้า
+                </button>
+              </li>
+            </ul>
+            <div className="tab-content mt-5">
+              <div
+                id="example-tab-5"
+                className="tab-pane leading-relaxed active"
+                role="tabpanel"
+                aria-labelledby="example-5-tab"
+              >
+                บันทึกรายการนัด
+              </div>
+              <div
+                id="example-tab-6"
+                className="tab-pane leading-relaxed"
+                role="tabpanel"
+                aria-labelledby="example-6-tab"
+              >
+                <Lab />
+              </div>
+              <div
+                id="example-tab-7"
+                className="tab-pane leading-relaxed"
+                role="tabpanel"
+                aria-labelledby="example-7-tab"
+              >
+                <Xray />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      {/* End Modal */}
       <div className="intro-y    h-10">
         <div className="flex  ">
           <CalendarCheck2 className="top-menu__sub-icon " size={32} />
           <span className="text-3xl  truncate ml-4">รายการนัด</span>
         </div>
         <br />
-        <button
-          className="btn btn-success  mr-2 mb-2"
-          data-tw-toggle="modal"
-          data-tw-target="#header-footer-modal-preview"
-        >
-          <Plus
-            className="top-menu__sub-icon "
-            size={22}
-            style={{ marginRight: 5 }}
-          />
-          บันทึกรายการนัด
-        </button>
+        {/* input */}
+        <div className="grid grid-cols-8 ">
+          <div>
+            <label htmlFor="regular-form-1" className="form-label"></label>
+            <input
+              value={formData.hn}
+              id="regular-form-1"
+              type="text"
+              className="form-control col-6"
+              placeholder="กรอก HN"
+              onChange={(e) => {
+                // setIsCode(false)
+                setFormData({ ...formData, hn: e.target.value });
+              }}
+            />
+          </div>
 
+          <button
+            className="btn btn-success  mr-2 mb-2 ml-2 col-span-2  w-40"
+            // data-tw-toggle="modal"
+            // data-tw-target="#header-footer-modal-preview"
+            onClick={() =>
+              formData.hn == ""
+                ? openNotificationWithIcon("error")
+                : setOpen(true)
+            }
+          >
+            <Plus
+              className="top-menu__sub-icon "
+              size={22}
+              style={{ marginRight: 5 }}
+            />
+            บันทึกรายการนัด
+          </button>
+        </div>
+
+        {/* input */}
         <div className="intro-y flex items-center h-2 mt-5">
           จำนวนการนัด 10 รายการ
           <div
@@ -85,10 +291,7 @@ const Appoint = () => {
 
                         <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                           <span className="mr-2"> HN : 0008262 </span> |
-                          <span className="ml-2">
-                            {" "}
-                            คลินิก : ศัลยกรรมกระดูก{" "}
-                          </span>
+                          <span className="ml-2">คลินิก : ศัลยกรรมกระดูก</span>
                         </div>
                       </td>
                       <td className="text-left w-24">
