@@ -13,7 +13,7 @@ const DoctorLimit = () => {
       <div className="intro-y    h-10">
         <div className="flex  ">
           <Cog className="top-menu__sub-icon " size={32} />
-          <span className="text-3xl  truncate ml-4">ตารางแพทย์</span>
+          <span className="text-3xl  truncate ml-4">ตารางตรวจแพทย์</span>
         </div>
         <br />
       </div>
