@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Cog, Trash, Edit, Plus } from "lucide-react";
-import { Select, Modal, Form, Calendar, ConfigProvider } from "antd";
+import { Select, Modal, Form, Calendar, ConfigProvider, Input } from "antd";
 import { CalendarMode } from "antd/es/calendar/generateCalendar";
 import * as moment from "moment";
 import "moment/locale/th";
@@ -12,6 +12,7 @@ const DoctorLimit = () => {
   const [dataCal, setDataCal] = useState([]);
   const [clinic, setClinic] = useState("");
   const [doctor, setDoctor] = useState("");
+  const [limit, setLimit] = useState(20);
   const [open, setOpen] = useState(false);
 
   const onChangeStatus = (checked, i) => {
@@ -199,6 +200,9 @@ const DoctorLimit = () => {
                   ]}
                 />
               </Form.Item>
+              <Form.Item label="จำนวนการนัด" rules={[{ required: true }]}>
+                  <Input value={limit} />
+                </Form.Item>
               {/* <hr /> */}
               <Form.Item label="วันออกตรวจ" rules={[{ required: true }]}>
                 <ConfigProvider locale={th_TH}>
