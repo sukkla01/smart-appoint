@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Cog, Trash, Edit, Plus } from "lucide-react";
-import { Switch, Modal,Button,
+import {
+  Switch,
+  Modal,
+  Button,
   Cascader,
   DatePicker,
   Form,
@@ -8,8 +11,8 @@ import { Switch, Modal,Button,
   InputNumber,
   Radio,
   Select,
-  TreeSelect
-   } from "antd";
+  TreeSelect,
+} from "antd";
 
 const Users_ = () => {
   const [data, setData] = useState([1, 2, 3, 4, 5]);
@@ -30,13 +33,10 @@ const Users_ = () => {
           <div className="preview">
             <div className="overflow-x-auto">
               <div className="intro-y flex items-center h-2 mt-5">
-
                 <div
                   className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-0 sm:mt-0"
                   style={{ width: 150 }}
-                >
-
-                </div>
+                ></div>
                 <div
                   className="form-check form-switch w-full  mt-0 sm:mt-0"
                   style={{ width: 150 }}
@@ -45,8 +45,7 @@ const Users_ = () => {
                     className="btn btn-success  mr-2 mb-2 ml-2 col-span-2  w-40"
                     // data-tw-toggle="modal"
                     // data-tw-target="#header-footer-modal-preview"
-                    onClick={() => setOpen(true)
-                    }
+                    onClick={() => setOpen(true)}
                   >
                     <Plus
                       className="top-menu__sub-icon "
@@ -59,7 +58,10 @@ const Users_ = () => {
               </div>
 
               <table className="table  mt-10">
-                <thead className="bg-primary text-white" style={{ borderTopLeftRadius: 10 }}>
+                <thead
+                  className="bg-primary text-white"
+                  style={{ borderTopLeftRadius: 10 }}
+                >
                   <tr>
                     <th className="whitespace-nowrap">#</th>
                     <th className="whitespace-nowrap">ชื่อ-สกุล</th>
@@ -77,12 +79,17 @@ const Users_ = () => {
                     return (
                       <tr>
                         <td>{i + 1}</td>
-                        <td>xxxxx  xxxxxx</td>
+                        <td>xxxxx xxxxxx</td>
                         <td>u0011</td>
                         <td>12xx56</td>
                         <td>16407xxxxx461</td>
                         <td>16407xxxxx461</td>
-                        <td><Switch defaultChecked onChange={(e) => onChangeStatus(e, i)} /></td>
+                        <td>
+                          <Switch
+                            defaultChecked
+                            onChange={(e) => onChangeStatus(e, i)}
+                          />
+                        </td>
                         <td>
                           <div>
                             <button className="btn btn-warning mr-1 mb-2">
@@ -107,19 +114,17 @@ const Users_ = () => {
         </div>
       </div>
 
-
       <Modal
-        headStyle={{ backgroundColor: 'red' }}
-        title={'เพิ่มผู้ใช้งาน'}
+        headStyle={{ backgroundColor: "red" }}
+        title={"เพิ่มผู้ใช้งาน"}
         // centered
         open={open}
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
         width="50%"
         className="modalStyle2"
-        okText='บันทึก'
-        cancelText='ยกเลิก'
-
+        okText="บันทึก"
+        cancelText="ยกเลิก"
       >
         <div className="modal-body " style={{ marginTop: -30 }}>
           <div className="intro-y  px-5 pt-0 ">
@@ -130,13 +135,32 @@ const Users_ = () => {
                 layout="horizontal"
                 // initialValues={{ size: componentSize }}
                 // onValuesChange={onFormLayoutChange}
-
               >
-                
-                <Form.Item label="Input" rules={[{ required: true }]}>
+                <Form.Item label="ชื่อ-สกุล" rules={[{ required: true }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item label="Select">
+                <Form.Item label="เลขบัตร 13 หลัก" rules={[{ required: true }]}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label="username" rules={[{ required: true }]}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label="password" rules={[{ required: true }]}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label="แผนก">
+                  <Select>
+                    <Select.Option value="demo">Demo</Select.Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item label="สถานะ">
+                  <Switch
+                    defaultChecked
+                    onChange={(e) => onChangeStatus(e, i)}
+                  />
+                </Form.Item>
+                {/* <Form.Item label="Select">
                   <Select>
                     <Select.Option value="demo">Demo</Select.Option>
                   </Select>
@@ -175,15 +199,14 @@ const Users_ = () => {
                 </Form.Item>
                 <Form.Item label="Button">
                   <Button>Button</Button>
-                </Form.Item>
+                </Form.Item> */}
               </Form>
-
             </div>
           </div>
         </div>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default Users_
+export default Users_;
