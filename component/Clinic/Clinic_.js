@@ -10,13 +10,10 @@ const Clinic_ = () => {
   const [data, setData] = useState([]);
   const [dataMaster, setDataMaster] = useState([]);
 
-
-
   useEffect(() => {
     getClinicAll();
-    getCliniMastercAll()
+    getCliniMastercAll();
   }, []);
-
 
   const getClinicAll = async () => {
     const token = localStorage.getItem("token");
@@ -37,13 +34,18 @@ const Clinic_ = () => {
         headers: { token: token },
       });
       setDataMaster(res.data);
-      console.log(res.data)
+      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onChangeStatus = (checked,i) => {
+  const onSelectDept =(e,clinic)=>{
+    console.log(`switch to ${e} ${clinic}`);
+
+  }
+
+  const onChangeStatus = (checked, i) => {
     console.log(`switch to ${checked} ${i}`);
   };
   return (
@@ -66,7 +68,7 @@ const Clinic_ = () => {
                     <th className="whitespace-nowrap">#</th>
                     <th className="whitespace-nowrap">รหัส</th>
                     <th className="whitespace-nowrap">ชื่อคลินิก</th>
-                    <th className="whitespace-nowrap">ชื่อคลินิก</th>
+                    <th className="whitespace-nowrap">map คลินิก</th>
                     <th className="whitespace-nowrap">Limit</th>
                     <th className="whitespace-nowrap">สถานะ</th>
                   </tr>
@@ -78,10 +80,35 @@ const Clinic_ = () => {
                         <td>{i + 1}</td>
                         <td>{item.clinic}</td>
                         <td>{item.name}</td>
-                        <td>{item.clinic_map}</td>
+                        <td>
+                          <Select
+                            value={item.clinic_map}
+                            onChange={(e)=>onSelectDept(e,item.clinic)}
+                            showSearch
+                            filterOption={(input, option) =>
+                              (option?.label ?? "")
+                                .toLowerCase()
+                                .includes(input.toLowerCase())
+                            }
+
+                            style ={{ width : 200 }}
+                          >
+                            {dataMaster.map((item, i) => {
+                              // console.log(formData.dept);
+                              return (
+                                <Select.Option key={i} value={item.clinic}>
+                                  {item.name}
+                                </Select.Option>
+                              );
+                            })}
+                          </Select>
+                        </td>
                         <td>{item.limit}</td>
                         <td>
-                          <Switch defaultChecked onChange={(e)=>onChangeStatus(e,i)} />
+                          <Switch
+                            defaultChecked
+                            onChange={(e) => onChangeStatus(e, i)}
+                          />
                         </td>
                       </tr>
                     );
