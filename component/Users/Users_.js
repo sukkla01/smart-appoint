@@ -1,22 +1,174 @@
 import React, { useEffect, useState } from "react";
-import { Cog, Trash, Edit, Plus } from "lucide-react";
-import {
-  Switch,
-  Modal,
-  Button,
-  Cascader,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  TreeSelect,
-} from "antd";
+import { Cog, Trash, Edit, Plus, Flag } from "lucide-react";
+import { Switch, Modal, Form, Input, Select, Popconfirm } from "antd";
+import axios from "axios";
+import config from "../../config";
+
+const BASE_URL = config.BASE_URL;
 
 const Users_ = () => {
-  const [data, setData] = useState([1, 2, 3, 4, 5]);
+  const [data, setData] = useState([]);
+  const [dataDept, setDataDept] = useState([]);
   const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    tname: "",
+    cid: "",
+    status: true,
+    tel: "",
+    dept: null,
+  });
+
+  useEffect(() => {
+    getUsersAll();
+    getDeptAll();
+  }, []);
+
+  const getUsersAll = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-user-all`, {
+        headers: { token: token },
+      });
+      setData(res.data);
+      // console.log(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getDeptAll = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-dept-all`, {
+        headers: { token: token },
+      });
+      setDataDept(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onChangeStatus = async (e,username) => {
+    console.log(e,username);
+    const token = localStorage.getItem("token");
+
+    let data = {
+      status : e,
+      usr_username : username
+    }
+
+    try {
+      let res = await axios.post(`${BASE_URL}/update-user-status`, data, {
+        headers: { token: token },
+      });
+      getUsersAll();
+    
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const onSelectDept = (value) => {
+    console.log(value);
+    setFormData({ ...formData, dept: value });
+  };
+
+  const onSubmit = async () => {
+    // setOpen(false)
+    console.log(formData);
+    const token = localStorage.getItem("token");
+
+    try {
+      let res = await axios.post(`${BASE_URL}/add-user`, formData, {
+        headers: { token: token },
+      });
+      getUsersAll();
+      onReset();
+      setOpen(false)
+      // Alert()
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const onEdit = async (username) => {
+    setOpen(true);
+    console.log(username);
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-user-id/${username}`, {
+        headers: { token: token },
+      });
+      console.log(res.data);
+      setFormData({
+        ...formData,
+        username: res.data[0].usr_username,
+        password: res.data[0].usr_password,
+        tname: res.data[0].usr_fullname,
+        cid: res.data[0].usr_cid,
+        status: res.data[0].usr_status == 1 ? true : false,
+        // tel: "",
+        dept: res.data[0].usr_dept,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    // setFormData({
+    //   ...formData,
+    //   username: formData.username,
+    //   password: formData.password,
+    //   tname: formData.tname,
+    //   cid: "",
+    //   status: true,
+    //   // tel: "",
+    //   dept: null,
+    // });
+    // try {
+    //   let res = await axios.post(`${BASE_URL}/add-user`, formData, {
+    //     headers: { token: token },
+    //   });
+    //   getUsersAll();
+    //   onReset();
+    //   // setOpen(false)
+    //   // Alert()
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
+  const del = async (cid) => {
+    // setOpen(false)
+    const token = localStorage.getItem("token");
+    let data = {
+      cid: cid,
+    };
+    try {
+      let res = await axios.post(`${BASE_URL}/delete-user`, data, {
+        headers: { token: token },
+      });
+      getUsersAll();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onReset = () => {
+    setFormData({
+      ...formData,
+      username: "",
+      password: "",
+      tname: "",
+      cid: "",
+      status: true,
+      // tel: "",
+      dept: null,
+    });
+  };
+
+  const onExit = () => {
+    onReset();
+    setOpen(false);
+  };
 
   return (
     <div className="col-12 mt-6">
@@ -52,7 +204,7 @@ const Users_ = () => {
                       size={22}
                       style={{ marginRight: 5 }}
                     />
-                    เพิ้ม
+                    เพิ่ม
                   </button>
                 </div>
               </div>
@@ -79,29 +231,43 @@ const Users_ = () => {
                     return (
                       <tr>
                         <td>{i + 1}</td>
-                        <td>xxxxx xxxxxx</td>
-                        <td>u0011</td>
-                        <td>12xx56</td>
-                        <td>16407xxxxx461</td>
-                        <td>16407xxxxx461</td>
+                        <td>{item.usr_fullname}</td>
+                        <td>{item.usr_username}</td>
+                        <td>{item.usr_password}</td>
+                        <td>{item.usr_cid}</td>
+                        <td>{item.nameDept}</td>
                         <td>
-                          <Switch
-                            defaultChecked
-                            onChange={(e) => onChangeStatus(e, i)}
-                          />
+                          {item.usr_status == 1 ? (
+                            <Switch
+                              defaultChecked
+                              onChange={(e) => onChangeStatus(e,item.usr_username)}
+                            />
+                          ) : (
+                            <Switch onChange={(e) => onChangeStatus(e,item.usr_username)} />
+                          )}
                         </td>
                         <td>
                           <div>
-                            <button className="btn btn-warning mr-1 mb-2">
+                            <button
+                              className="btn btn-warning mr-1 mb-2"
+                              onClick={() => onEdit(item.usr_username)}
+                            >
                               <Edit className="top-menu__sub-icon " size={14} />
                             </button>
-
-                            <button className="btn btn-danger mr-1 mb-2">
-                              <Trash
-                                className="top-menu__sub-icon "
-                                size={14}
-                              />
-                            </button>
+                            <Popconfirm
+                              title="คุณต้องการลบหรือไม่"
+                              onConfirm={() => del(item.usr_cid)}
+                              // onCancel={cancel}
+                              okText="ตกลง"
+                              cancelText="ออก"
+                            >
+                              <button className="btn btn-danger mr-1 mb-2">
+                                <Trash
+                                  className="top-menu__sub-icon "
+                                  size={14}
+                                />
+                              </button>
+                            </Popconfirm>
                           </div>
                         </td>
                       </tr>
@@ -119,8 +285,8 @@ const Users_ = () => {
         title={"เพิ่มผู้ใช้งาน"}
         // centered
         open={open}
-        onOk={() => setOpen(false)}
-        onCancel={() => setOpen(false)}
+        onOk={onSubmit}
+        onCancel={onExit}
         width="50%"
         className="modalStyle2"
         okText="บันทึก"
@@ -137,69 +303,66 @@ const Users_ = () => {
                 // onValuesChange={onFormLayoutChange}
               >
                 <Form.Item label="ชื่อ-สกุล" rules={[{ required: true }]}>
-                  <Input />
+                  <Input
+                    value={formData.tname}
+                    onChange={(e) => {
+                      setFormData({ ...formData, tname: e.target.value });
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item label="เลขบัตร 13 หลัก" rules={[{ required: true }]}>
-                  <Input />
+                  <Input
+                    value={formData.cid}
+                    onChange={(e) => {
+                      setFormData({ ...formData, cid: e.target.value });
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item label="username" rules={[{ required: true }]}>
-                  <Input />
+                  <Input
+                    value={formData.username}
+                    disabled = { formData.username == '' ?  false :   true}
+                    onChange={(e) => {
+                      setFormData({ ...formData, username: e.target.value });
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item label="password" rules={[{ required: true }]}>
-                  <Input />
+                  <Input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item label="แผนก">
-                  <Select>
-                    <Select.Option value="demo">Demo</Select.Option>
+                  <Select
+                    value={formData.dept}
+                    onChange={onSelectDept}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                  >
+                    {dataDept.map((item, i) => {
+                      console.log(formData.dept);
+                      return (
+                        <Select.Option key={i} value={item.hospcode}>
+                          {item.name}
+                        </Select.Option>
+                      );
+                    })}
                   </Select>
                 </Form.Item>
 
                 <Form.Item label="สถานะ">
                   <Switch
-                    defaultChecked
-                    onChange={(e) => onChangeStatus(e, i)}
+                    checked={formData.status}
+                    onChange={(e) => onChangeStatus(e)}
                   />
                 </Form.Item>
-                {/* <Form.Item label="Select">
-                  <Select>
-                    <Select.Option value="demo">Demo</Select.Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item label="TreeSelect">
-                  <TreeSelect
-                    treeData={[
-                      { title: 'Light', value: 'light', children: [{ title: 'Bamboo', value: 'bamboo' }] },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item label="Cascader">
-                  <Cascader
-                    options={[
-                      {
-                        value: 'zhejiang',
-                        label: 'Zhejiang',
-                        children: [
-                          {
-                            value: 'hangzhou',
-                            label: 'Hangzhou',
-                          },
-                        ],
-                      },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item label="DatePicker">
-                  <DatePicker />
-                </Form.Item>
-                <Form.Item label="InputNumber">
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item label="Switch" valuePropName="checked">
-                  <Switch />
-                </Form.Item>
-                <Form.Item label="Button">
-                  <Button>Button</Button>
-                </Form.Item> */}
               </Form>
             </div>
           </div>

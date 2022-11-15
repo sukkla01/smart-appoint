@@ -1,18 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import jwt_decode from "jwt-decode";
+import axios from "axios";
+import config from "../config";
+
+const BASE_URL = config.BASE_URL;
 
 const Login = () => {
   const router = useRouter();
+  const [account, setAccount] = useState({ username: "", password: "" });
+  const [msgErr, setMsgErr] = useState("");
 
   useEffect(() => {
+    localStorage.removeItem("token");
     localStorage.setItem("NavId", 1);
   }, []);
-  const login = () => {
-    console.log('sss')
-    router.push({
-        pathname: '/',
-        // query: { dep: dep, date: date, profile: profile, tname: tname, hn_: hn, time: '' },
-      })
+
+  const login = async () => {
+    let data = JSON.stringify({
+      username: account.username,
+      password: account.password,
+    });
+    let axiosConfig = {
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow_origin": "*",
+      },
+    };
+    if (account.username == "" || account.password == "") {
+      setMsgErr("กรุณากรอกข้อมูลให้ครบ");
+    } else {
+      try {
+        let res = await axios.post(`${BASE_URL}/signin`, data, axiosConfig);
+        if (res.status == 200) {
+          const decoded = jwt_decode(res.data.token);
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("NavId", 1);
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error.message);
+
+        if (error.message == "Request failed with status code 500") {
+          setMsgErr("username หรือ password ไม่ถูกต้อง");
+        }
+      }
+    }
   };
   return (
     <div className="login">
@@ -26,7 +59,7 @@ const Login = () => {
                 className="w-6"
                 src="dist/images/logo.svg"
               />
-              <span className="text-white text-lg ml-3"> Smart IPD </span>
+              <span className="text-white text-lg ml-3"> Smart Appoint </span>
             </a>
             <div className="my-auto">
               <img
@@ -35,7 +68,7 @@ const Login = () => {
                 src="dist/images/illustration.svg"
               />
               <div className="-intro-x text-white font-medium text-4xl leading-tight mt-10">
-                IPD PAPERLESS
+                Smart Appoint
                 {/* <br />
                 sign in to your account. */}
               </div>
@@ -51,57 +84,44 @@ const Login = () => {
               <h2 className="intro-x font-bold text-2xl xl:text-3xl text-center xl:text-left">
                 เข้าสู่ระบบ
               </h2>
-              <div className="intro-x mt-2 text-slate-400 xl:hidden text-center">
-                {/* A few more clicks to sign in to your account. Manage all your
-                e-commerce accounts in one place */}
-              </div>
-              <div className="intro-x mt-8">
-                <input
-                  type="text"
-                  className="intro-x login__input form-control py-3 px-4 block"
-                  placeholder="Email"
-                />
-                <input
-                  type="password"
-                  className="intro-x login__input form-control py-3 px-4 block mt-4"
-                  placeholder="Password"
-                />
-              </div>
-              <div className="intro-x flex text-slate-600 dark:text-slate-500 text-xs sm:text-sm mt-4">
-                <div className="flex items-center mr-auto">
-                  <input
-                    id="remember-me"
-                    type="checkbox"
-                    className="form-check-input border mr-2"
-                  />
-                  <label
-                    className="cursor-pointer select-none"
-                    htmlFor="remember-me"
-                  >
-                    Remember me
-                  </label>
+              <form>
+                <div className="intro-x mt-2 text-slate-400 xl:hidden text-center">
+                 
+        
                 </div>
-                <a>Forgot Password?</a>
-              </div>
-              <div className="intro-x mt-5 xl:mt-8 text-center xl:text-left">
-                <button className="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top" onClick={login}>
-                  Login
-                </button>
-                <button className="btn btn-outline-secondary py-3 px-4 w-full xl:w-32 mt-3 xl:mt-0 align-top">
-                  Register
-                </button>
-              </div>
-              <div className="intro-x mt-10 xl:mt-24 text-slate-600 dark:text-slate-500 text-center xl:text-left">
-                {" "}
-                By signin up, you agree to our{" "}
-                <a className="text-primary dark:text-slate-200">
-                  Terms and Conditions
-                </a>{" "}
-                &amp;{" "}
-                <a className="text-primary dark:text-slate-200">
-                  Privacy Policy
-                </a>{" "}
-              </div>
+                <div className="intro-x mt-8">
+                  <input
+                    type="text"
+                    className="intro-x login__input form-control py-3 px-4 block"
+                    placeholder="username"
+                    onChange={(e) => {
+                      setAccount({ ...account, username: e.target.value });
+                    }}
+                  />
+                  <input
+                    type="password"
+                    className="intro-x login__input form-control py-3 px-4 block mt-4"
+                    placeholder="Password"
+                    onChange={(e) => {
+                      setAccount({ ...account, password: e.target.value });
+                    }}
+                  />
+                   <p style={{ color: "red", fontSize: 16 }}>{msgErr}</p>
+                </div>
+
+                <div className="intro-x mt-5 xl:mt-8 text-center xl:text-left">
+                  <button
+                    className="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top"
+                    type="submit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      login();
+                    }}
+                  >
+                    Login
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
           {/* END: Login Form */}

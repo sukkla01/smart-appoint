@@ -148,7 +148,7 @@ const Menu_ = () => {
             </li>
           </ul>
         </li>
-        <li onClick={() => onSelect(9)}>
+        <li onClick={() => onSelect(4,'/login')}>
           <a href="#" className="top-menu">
             <div className="top-menu__icon">
               <LogOut

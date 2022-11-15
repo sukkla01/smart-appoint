@@ -1,9 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { Cog, Plus } from "lucide-react";
-import { Switch } from "antd";
+import { Cog, Trash, Edit, Plus, Flag } from "lucide-react";
+import { Switch, Modal, Form, Input, Select, Popconfirm } from "antd";
+import axios from "axios";
+import config from "../../config";
+
+const BASE_URL = config.BASE_URL;
 
 const Clinic_ = () => {
-  const [data, setData] = useState([1, 2, 3, 4, 5]);
+  const [data, setData] = useState([]);
+  const [dataMaster, setDataMaster] = useState([]);
+
+
+
+  useEffect(() => {
+    getClinicAll();
+    getCliniMastercAll()
+  }, []);
+
+
+  const getClinicAll = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-clinic-all`, {
+        headers: { token: token },
+      });
+      setData(res.data);
+      // console.log(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getCliniMastercAll = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-clinicmaster-all`, {
+        headers: { token: token },
+      });
+      setDataMaster(res.data);
+      console.log(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const onChangeStatus = (checked,i) => {
     console.log(`switch to ${checked} ${i}`);
@@ -38,10 +76,10 @@ const Clinic_ = () => {
                     return (
                       <tr>
                         <td>{i + 1}</td>
-                        <td>013</td>
-                        <td>คลินิกเบาหวาน</td>
-                        <td>คลินิกเบาหวาน</td>
-                        <td>20</td>
+                        <td>{item.clinic}</td>
+                        <td>{item.name}</td>
+                        <td>{item.clinic_map}</td>
+                        <td>{item.limit}</td>
                         <td>
                           <Switch defaultChecked onChange={(e)=>onChangeStatus(e,i)} />
                         </td>
