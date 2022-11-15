@@ -1,29 +1,158 @@
 import React, { useEffect, useState } from "react";
 import { Cog, Trash, Edit, Plus } from "lucide-react";
-import { Select, Modal, Form, Calendar, ConfigProvider, Input } from "antd";
+import {
+  Select,
+  Modal,
+  Form,
+  Calendar,
+  ConfigProvider,
+  Input,
+  Badge,
+} from "antd";
 import { CalendarMode } from "antd/es/calendar/generateCalendar";
 import * as moment from "moment";
 import "moment/locale/th";
 moment.locale("th");
 import th_TH from "antd/lib/locale/th_TH";
+import axios from "axios";
+import config from "../../config";
 
+const BASE_URL = config.BASE_URL;
+
+let listData = [
+  { type: "warning", content: "This is warning event." },
+  { type: "success", content: "This is usual event." },
+];
 const DoctorLimit = () => {
   const [data, setData] = useState([1, 2, 3, 4, 5]);
+  const [dataDoctor, setDataDoctor] = useState([]);
+  const [dataClinic, setDataClinic] = useState([]);
   const [dataCal, setDataCal] = useState([]);
   const [clinic, setClinic] = useState("");
   const [doctor, setDoctor] = useState("");
   const [limit, setLimit] = useState(20);
   const [open, setOpen] = useState(false);
 
-  const onChangeStatus = (checked, i) => {
-    console.log(`switch to ${checked} ${i}`);
+  useEffect(() => {
+    getAll();
+    getDoctorAll();
+    getClinic();
+  }, []);
+
+  const dateCellRender = (value) => {
+    // const listData = getListData(value);
+    // console.log(moment(value).format("YYYY-MM-DD"));
+    // console.log(dataCal);
+    let date_ = moment(value).format("YYYY-MM-DD");
+    let reder_ = "";
+
+    dataCal.map((item, i) => {
+      let date_ = moment(value).format("YYYY-MM-DD");
+      let vstdate = moment(item.vstdate).format("YYYY-MM-DD");
+      if (vstdate == date_) {
+        reder_ = (
+          <ul className="events">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-danger rounded-full mr-3" />
+              <span className="truncate">.....</span>
+            </div>
+          </ul>
+        );
+      }
+    });
+
+ 
+
+    return reder_;
+  };
+
+  const getCalendar = async (value) => {
+    const token = localStorage.getItem("token");
+    console.log(value)
+    let tmp_doctor = value == "" ? doctor : value;
+    try {
+      let res = await axios.get(
+        `${BASE_URL}/get-Calendar/${clinic}/${tmp_doctor}`,
+        {
+          headers: { token: token },
+        }
+      );
+      setDataCal(res.data);
+      // console.log(res.data);
+      dateCellRender(value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const CalendarNew = () => {
+    return (
+      <Calendar
+        locale="th_TH"
+        onSelect={onSelectCala}
+        dateCellRender={dateCellRender}
+      />
+    );
+  };
+  const getAll = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      let res = await axios.get(`${BASE_URL}/get-clinicdoctor-all`, {
+        headers: { token: token },
+      });
+      setData(res.data);
+      // console.log(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getDoctorAll = async () => {
+    const token = localStorage.getItem("token");
+    let tmp = [];
+
+    try {
+      let res = await axios.get(`${BASE_URL}/get-doctor-all`, {
+        headers: { token: token },
+      });
+      res.data.map((item, i) => {
+        tmp.push({
+          value: item.doctor,
+          label: item.tname,
+        });
+      });
+      setDataDoctor(tmp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getClinic = async () => {
+    const token = localStorage.getItem("token");
+    let tmp = [];
+    try {
+      let res = await axios.get(`${BASE_URL}/get-clinic-doctor-all`, {
+        headers: { token: token },
+      });
+
+      res.data.map((item, i) => {
+        tmp.push({
+          value: item.clinic,
+          label: item.name,
+        });
+      });
+      setDataClinic(tmp);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onChangeClinic = (value) => {
     setClinic(value);
+    console.log(value);
   };
   const onChangeDoctor = (value) => {
     setDoctor(value);
+    getCalendar(value);
   };
 
   const onSearchClinic = (value) => {
@@ -33,10 +162,28 @@ const DoctorLimit = () => {
     console.log("search:", value);
   };
 
-  const onSelectCala = (value) => {
-    console.log(value.format("YYYY-MM-DD"));
-    if ((clinic = "" || doctor == "")) {
-      alert("ต้องไม่ว่าง");
+  const onSelectCala = async (value) => {
+    const token = localStorage.getItem("token");
+
+    let data = {
+      clinic: clinic,
+      doctor: doctor,
+      limit: limit,
+      date: value.format("YYYY-MM-DD"),
+    };
+
+    // console.log(data);
+    if (clinic == "" || doctor == "") {
+      alert("เลือกข้อมูลไม่ครบ");
+    } else {
+      try {
+        let res = await axios.post(`${BASE_URL}/add-doctor-schedule`, data, {
+          headers: { token: token },
+        });
+        getCalendar('');
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   return (
@@ -134,7 +281,7 @@ const DoctorLimit = () => {
         open={open}
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
-        width="50%"
+        width="70%"
         className="modalStyle2"
         okText="บันทึก"
         cancelText="ยกเลิก"
@@ -155,20 +302,7 @@ const DoctorLimit = () => {
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                  options={[
-                    {
-                      value: "jack",
-                      label: "Jack",
-                    },
-                    {
-                      value: "lucy",
-                      label: "Lucy",
-                    },
-                    {
-                      value: "tom",
-                      label: "Tom",
-                    },
-                  ]}
+                  options={dataClinic}
                 />
               </Form.Item>
               <Form.Item label="แพทย์" rules={[{ required: true }]}>
@@ -184,30 +318,22 @@ const DoctorLimit = () => {
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                  options={[
-                    {
-                      value: "jack",
-                      label: "Jack",
-                    },
-                    {
-                      value: "lucy",
-                      label: "Lucy",
-                    },
-                    {
-                      value: "tom",
-                      label: "Tom",
-                    },
-                  ]}
+                  options={dataDoctor}
                 />
               </Form.Item>
               <Form.Item label="จำนวนการนัด" rules={[{ required: true }]}>
-                  <Input value={limit} />
-                </Form.Item>
+                <Input
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(e.target.value);
+                  }}
+                />
+              </Form.Item>
               {/* <hr /> */}
               <Form.Item label="วันออกตรวจ" rules={[{ required: true }]}>
                 <ConfigProvider locale={th_TH}>
                   <div style={{ marginLeft: 100, marginTop: -30 }}>
-                    <Calendar locale="th_TH" onSelect={onSelectCala} />
+                    <CalendarNew />
                   </div>
                 </ConfigProvider>
               </Form.Item>

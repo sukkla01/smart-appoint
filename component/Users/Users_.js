@@ -113,27 +113,6 @@ const Users_ = () => {
       console.log(error);
     }
 
-    // setFormData({
-    //   ...formData,
-    //   username: formData.username,
-    //   password: formData.password,
-    //   tname: formData.tname,
-    //   cid: "",
-    //   status: true,
-    //   // tel: "",
-    //   dept: null,
-    // });
-    // try {
-    //   let res = await axios.post(`${BASE_URL}/add-user`, formData, {
-    //     headers: { token: token },
-    //   });
-    //   getUsersAll();
-    //   onReset();
-    //   // setOpen(false)
-    //   // Alert()
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   const del = async (cid) => {
@@ -229,7 +208,7 @@ const Users_ = () => {
                 <tbody>
                   {data.map((item, i) => {
                     return (
-                      <tr>
+                      <tr key={i}>
                         <td>{i + 1}</td>
                         <td>{item.usr_fullname}</td>
                         <td>{item.usr_username}</td>

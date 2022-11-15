@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Cog, Trash, Edit, Plus, Flag } from "lucide-react";
-import { Switch, Modal, Form, Input, Select, Popconfirm } from "antd";
+import { Switch, notification, Form, Input, Select, Popconfirm } from "antd";
 import axios from "axios";
 import config from "../../config";
 
@@ -9,6 +9,16 @@ const BASE_URL = config.BASE_URL;
 const Clinic_ = () => {
   const [data, setData] = useState([]);
   const [dataMaster, setDataMaster] = useState([]);
+
+  const openNotificationWithIcon = (type) => {
+    console.log('dddd')
+    notification[type]({
+      message: "แจ้งเตือน",
+      description: "อัพเดทเรียบร้อยแล้ว",
+      duration: 3,
+      style: { backroundColor: "#164E63" },
+    });
+  };
 
   useEffect(() => {
     getClinicAll();
@@ -34,19 +44,49 @@ const Clinic_ = () => {
         headers: { token: token },
       });
       setDataMaster(res.data);
-      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onSelectDept =(e,clinic)=>{
+  const onSelectDept = async (e, clinic) => {
     console.log(`switch to ${e} ${clinic}`);
+    const token = localStorage.getItem("token");
+    let data = {
+      clinicMap: clinic,
+      ClinicMaster: e,
+    };
 
-  }
+    try {
+      let res = await axios.post(`${BASE_URL}/update-clinic-map`, data, {
+        headers: { token: token },
+      });
+      getClinicAll();
+      openNotificationWithIcon("success")
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const onChangeStatus = (checked, i) => {
-    console.log(`switch to ${checked} ${i}`);
+ 
+  const onChangeStatus = async (e,clinic) => {
+    // console.log(e,username);
+    const token = localStorage.getItem("token");
+
+    let data = {
+      status : e,
+      clinic : clinic
+    }
+
+    try {
+      let res = await axios.post(`${BASE_URL}/update-clinic-status`, data, {
+        headers: { token: token },
+      });
+      getClinicAll();
+    
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="col-12 mt-6">
@@ -69,29 +109,28 @@ const Clinic_ = () => {
                     <th className="whitespace-nowrap">รหัส</th>
                     <th className="whitespace-nowrap">ชื่อคลินิก</th>
                     <th className="whitespace-nowrap">map คลินิก</th>
-                    <th className="whitespace-nowrap">Limit</th>
+                    {/* <th className="whitespace-nowrap">Limit</th> */}
                     <th className="whitespace-nowrap">สถานะ</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.map((item, i) => {
                     return (
-                      <tr>
+                      <tr  key={i}>
                         <td>{i + 1}</td>
                         <td>{item.clinic}</td>
                         <td>{item.name}</td>
                         <td>
                           <Select
                             value={item.clinic_map}
-                            onChange={(e)=>onSelectDept(e,item.clinic)}
+                            onChange={(e) => onSelectDept(e, item.clinic)}
                             showSearch
                             filterOption={(input, option) =>
                               (option?.label ?? "")
                                 .toLowerCase()
                                 .includes(input.toLowerCase())
                             }
-
-                            style ={{ width : 200 }}
+                            style={{ width: 200 }}
                           >
                             {dataMaster.map((item, i) => {
                               // console.log(formData.dept);
@@ -103,12 +142,16 @@ const Clinic_ = () => {
                             })}
                           </Select>
                         </td>
-                        <td>{item.limit}</td>
+                        {/* <td>{item.limit}</td> */}
                         <td>
-                          <Switch
-                            defaultChecked
-                            onChange={(e) => onChangeStatus(e, i)}
-                          />
+                        {item.status == 'Y' ? (
+                            <Switch
+                              defaultChecked
+                              onChange={(e) => onChangeStatus(e,item.clinic)}
+                            />
+                          ) : (
+                            <Switch onChange={(e) => onChangeStatus(e,item.clinic)} />
+                          )}
                         </td>
                       </tr>
                     );
