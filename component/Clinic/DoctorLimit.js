@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Cog, Trash, Edit, Plus } from "lucide-react";
+import { Cog, Trash, Edit, Plus, Search, RotateCcw } from "lucide-react";
 import {
   Select,
   Modal,
@@ -7,9 +7,10 @@ import {
   Calendar,
   ConfigProvider,
   Input,
-  Badge,
+  notification,
+  Popconfirm,
+  DatePicker,
 } from "antd";
-import { CalendarMode } from "antd/es/calendar/generateCalendar";
 import * as moment from "moment";
 import "moment/locale/th";
 moment.locale("th");
@@ -19,12 +20,8 @@ import config from "../../config";
 
 const BASE_URL = config.BASE_URL;
 
-let listData = [
-  { type: "warning", content: "This is warning event." },
-  { type: "success", content: "This is usual event." },
-];
 const DoctorLimit = () => {
-  const [data, setData] = useState([1, 2, 3, 4, 5]);
+  const [data, setData] = useState([]);
   const [dataDoctor, setDataDoctor] = useState([]);
   const [dataClinic, setDataClinic] = useState([]);
   const [dataCal, setDataCal] = useState([]);
@@ -32,12 +29,35 @@ const DoctorLimit = () => {
   const [doctor, setDoctor] = useState("");
   const [limit, setLimit] = useState(20);
   const [open, setOpen] = useState(false);
+  const [filterData, setFilterData] = useState({
+    vstdate: null,
+    clinic: null,
+    doctor: null,
+  });
 
   useEffect(() => {
     getAll();
     getDoctorAll();
     getClinic();
   }, []);
+
+  const openNotificationWithIcon = (type) => {
+    notification[type]({
+      message: "แจ้งเตือน",
+      description: "บันทึกเรียบร้อยแล้ว",
+      duration: 3,
+      style: { backroundColor: "#164E63" },
+    });
+  };
+
+  const openNotificationWithIconError = (type) => {
+    notification[type]({
+      message: "แจ้งเตือน",
+      description: "เลือกข้อมูลไม่ครบ  ไม่ได้เลือกคลินิกหรือแพทย์",
+      duration: 3,
+      style: { backroundColor: "#164E63" },
+    });
+  };
 
   const dateCellRender = (value) => {
     // const listData = getListData(value);
@@ -53,22 +73,20 @@ const DoctorLimit = () => {
         reder_ = (
           <ul className="events">
             <div className="flex items-center">
-              <div className="w-3 h-3 bg-danger rounded-full mr-3" />
-              <span className="truncate">.....</span>
+              <div className="w-3 h-3 bg-warning rounded-full mr-3" />
+              <span className="truncate">{item.limit} คน</span>
             </div>
           </ul>
         );
       }
     });
 
- 
-
     return reder_;
   };
 
   const getCalendar = async (value) => {
     const token = localStorage.getItem("token");
-    console.log(value)
+    console.log(value);
     let tmp_doctor = value == "" ? doctor : value;
     try {
       let res = await axios.get(
@@ -85,15 +103,15 @@ const DoctorLimit = () => {
     }
   };
 
-  const CalendarNew = () => {
-    return (
-      <Calendar
-        locale="th_TH"
-        onSelect={onSelectCala}
-        dateCellRender={dateCellRender}
-      />
-    );
-  };
+  // const CalendarNew = () => {
+  //   return (
+  //     <Calendar
+  //       locale="th_TH"
+  //       onSelect={onSelectCala}
+  //       // dateCellRender={dateCellRender}
+  //     />
+  //   );
+  // };
   const getAll = async () => {
     const token = localStorage.getItem("token");
 
@@ -107,6 +125,27 @@ const DoctorLimit = () => {
       console.log(error);
     }
   };
+
+  const getFilter = async () => {
+    const token = localStorage.getItem("token");
+
+    let data = {
+      vstdate: filterData.vstdate,
+      doctor: filterData.doctor,
+      clinic: filterData.clinic,
+    };
+
+    try {
+      let res = await axios.post(`${BASE_URL}/get-clinicdoctor-filter`, data, {
+        headers: { token: token },
+      });
+      setData(res.data);
+      // console.log(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getDoctorAll = async () => {
     const token = localStorage.getItem("token");
     let tmp = [];
@@ -174,20 +213,88 @@ const DoctorLimit = () => {
 
     // console.log(data);
     if (clinic == "" || doctor == "") {
-      alert("เลือกข้อมูลไม่ครบ");
+      openNotificationWithIconError("error");
     } else {
       try {
         let res = await axios.post(`${BASE_URL}/add-doctor-schedule`, data, {
           headers: { token: token },
         });
-        getCalendar('');
+        getCalendar("");
+        openNotificationWithIcon("success");
+        getAll();
       } catch (error) {
         console.log(error);
       }
     }
   };
+
+  const del = async (id) => {
+    // setOpen(false)
+    const token = localStorage.getItem("token");
+    let data = {
+      id: id,
+    };
+    try {
+      let res = await axios.post(`${BASE_URL}/delete-doctor`, data, {
+        headers: { token: token },
+      });
+      getAll();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSearch = async () => {
+    const token = localStorage.getItem("token");
+    let path = "";
+    let data = {
+      vstdate: filterData.vstdate,
+      clinic: filterData.clinic,
+      doctor: filterData.doctor,
+    };
+
+    if (
+      filterData.vstdate == null &&
+      filterData.clinic == null &&
+      filterData.doctor == null
+    ) {
+      console.log('all')
+      try {
+        let res = await axios.get(`${BASE_URL}/get-clinicdoctor-all`, {
+          headers: { token: token },
+        });
+        setData(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log('filter')
+
+      try {
+        let res = await axios.post(
+          `${BASE_URL}/get-clinicdoctor-filter`,
+          data,
+          {
+            headers: { token: token },
+          }
+        );
+        setData(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const onChangeDateFilter = (date, dateString) => {
+    setFilterData({ ...filterData, vstdate: dateString });
+  };
+
+  const onResetFilter = () => {
+    setFilterData({ ...filterData, vstdate: null, clinic: null, doctor: null });
+  };
   return (
     <div className="col-12 mt-6">
+      {console.log(filterData.vstdate)}
       <div className="intro-y    h-10">
         <div className="flex  ">
           <Cog className="top-menu__sub-icon " size={32} />
@@ -201,6 +308,66 @@ const DoctorLimit = () => {
           <div className="preview">
             <div className="overflow-x-auto">
               <div className="intro-y flex items-center h-2 mt-5">
+                <div className="mr-3 text-xl">Filter</div>
+                <ConfigProvider locale={th_TH}>
+                  <DatePicker
+                    onChange={onChangeDateFilter}
+                    placeholder="------เลือกวันที่------"
+                    style={{ width: 200 }}
+                    value={
+                      filterData.vstdate == null
+                        ? null
+                        : moment(filterData.vstdate, "YYYY-MM-DD")
+                    }
+                  />
+                </ConfigProvider>
+                <Select
+                  style={{ width: 200, marginLeft: 5 }}
+                  showSearch
+                  placeholder="-----เลือกคลินิก----"
+                  optionFilterProp="children"
+                  onChange={(e) => {
+                    setFilterData({ ...filterData, clinic: e });
+                  }}
+                  onSearch={onSearchClinic}
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={dataClinic}
+                  value={(filterData.clinic = null ? null : filterData.clinic)}
+                />
+                <Select
+                  style={{ width: 200, marginLeft: 5 }}
+                  showSearch
+                  placeholder="-----เลือกแพทย์-----"
+                  optionFilterProp="children"
+                  onChange={(e) => {
+                    setFilterData({ ...filterData, doctor: e });
+                  }}
+                  onSearch={onSearchDoctor}
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={dataDoctor}
+                  value={(filterData.doctor = null ? null : filterData.doctor)}
+                />
+                <button
+                  className="btn btn-primary mr-1 mb-2 mt-2  ml-2"
+                  onClick={onSearch}
+                >
+                  <Search className="top-menu__sub-icon " size={14} />
+                </button>
+                <button
+                  className="btn btn-warning mr-1 mb-2 mt-2  ml-1"
+                  onClick={onResetFilter}
+                >
+                  <RotateCcw className="top-menu__sub-icon " size={14} />
+                </button>
+
                 <div
                   className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-0 sm:mt-0"
                   style={{ width: 150 }}
@@ -220,7 +387,7 @@ const DoctorLimit = () => {
                       size={22}
                       style={{ marginRight: 5 }}
                     />
-                    เพิ้ม
+                    เพิ่ม
                   </button>
                 </div>
               </div>
@@ -232,7 +399,7 @@ const DoctorLimit = () => {
                 >
                   <tr>
                     <th className="whitespace-nowrap">#</th>
-                    <th className="whitespace-nowrap">รหัส</th>
+                    <th className="whitespace-nowrap">รหัสคลินิก</th>
                     <th className="whitespace-nowrap">ชื่อคลินิก</th>
                     <th className="whitespace-nowrap">วันที่ออกตรวจ</th>
                     <th className="whitespace-nowrap">แพทย์</th>
@@ -245,23 +412,27 @@ const DoctorLimit = () => {
                     return (
                       <tr>
                         <td>{i + 1}</td>
-                        <td>013</td>
-                        <td>คลินิกเบาหวาน</td>
-                        <td>2022-10-01</td>
-                        <td>นพ.ทดสอบ การเคลื่อนไหว</td>
-                        <td>20</td>
+                        <td>{item.clinic}</td>
+                        <td>{item.name}</td>
+                        <td>{moment(item.vstdate).format("D-MMM-Y")}</td>
+                        <td>{item.tname}</td>
+                        <td>{item.limit}</td>
                         <td>
                           <div>
-                            <button className="btn btn-warning mr-1 mb-2">
-                              <Edit className="top-menu__sub-icon " size={14} />
-                            </button>
-
-                            <button className="btn btn-danger mr-1 mb-2">
-                              <Trash
-                                className="top-menu__sub-icon "
-                                size={14}
-                              />
-                            </button>
+                            <Popconfirm
+                              title="คุณต้องการลบหรือไม่"
+                              onConfirm={() => del(item.id)}
+                              // onCancel={cancel}
+                              okText="ตกลง"
+                              cancelText="ออก"
+                            >
+                              <button className="btn btn-danger mr-1 mb-2">
+                                <Trash
+                                  className="top-menu__sub-icon "
+                                  size={14}
+                                />
+                              </button>
+                            </Popconfirm>
                           </div>
                         </td>
                       </tr>
@@ -283,7 +454,7 @@ const DoctorLimit = () => {
         onCancel={() => setOpen(false)}
         width="70%"
         className="modalStyle2"
-        okText="บันทึก"
+        okText="ตกลง"
         cancelText="ยกเลิก"
       >
         <div className="modal-body " style={{ marginTop: -30 }}>
@@ -331,11 +502,21 @@ const DoctorLimit = () => {
               </Form.Item>
               {/* <hr /> */}
               <Form.Item label="วันออกตรวจ" rules={[{ required: true }]}>
-                <ConfigProvider locale={th_TH}>
-                  <div style={{ marginLeft: 100, marginTop: -30 }}>
-                    <CalendarNew />
-                  </div>
-                </ConfigProvider>
+                <div
+                  className="intro-y box"
+                  style={{ backgroundColor: "#C8D6DC" }}
+                >
+                  <ConfigProvider locale={th_TH}>
+                    <div style={{ padding: 3 }}>
+                      {/* <CalendarNew /> */}
+                      <Calendar
+                        locale="th_TH"
+                        onSelect={onSelectCala}
+                        dateCellRender={dateCellRender}
+                      />
+                    </div>
+                  </ConfigProvider>
+                </div>
               </Form.Item>
             </div>
           </div>

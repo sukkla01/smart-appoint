@@ -1,17 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Bell } from "lucide-react";
 import Menu_ from "./Menu_";
 import Link from "next/link";
+import jwt_decode from "jwt-decode";
 
 const Header_ = () => {
-  // const   pttype  = ['01','02','03']
+  const [profile, setProfile] = useState([]);
 
   // const  test  = pttype.filter((item)=> item != '02' )
 
   // console.log(test)
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  const getProfile = () => {
+    const token = localStorage.getItem("token");
+    const decoded = jwt_decode(token);
+    setProfile(decoded);
+    // console.log(decoded);
+  };
 
   const onClick = () => {
-    console.log("dd");
+    // console.log("dd");
   };
 
   return (
@@ -60,7 +71,7 @@ const Header_ = () => {
                 className="notification__icon dark:text-slate-50"
                 color="white"
                 size={22}
-              />{" "}
+              />
             </a>
             <div className="search-result">
               <div className="search-result__content">
@@ -68,19 +79,19 @@ const Header_ = () => {
                 <div className="mb-5">
                   <a className="flex items-center">
                     <div className="w-8 h-8 bg-success/20 dark:bg-success/10 text-success flex items-center justify-center rounded-full">
-                      <i className="w-4 h-4" />{" "}
+                      <i className="w-4 h-4" />
                     </div>
                     <div className="ml-3">Mail Settings</div>
                   </a>
                   <a className="flex items-center mt-2">
                     <div className="w-8 h-8 bg-pending/10 text-pending flex items-center justify-center rounded-full">
-                      <i className="w-4 h-4" />{" "}
+                      <i className="w-4 h-4" />
                     </div>
                     <div className="ml-3">Users &amp; Permissions</div>
                   </a>
                   <a className="flex items-center mt-2">
                     <div className="w-8 h-8 bg-primary/10 dark:bg-primary/20 text-primary/80 flex items-center justify-center rounded-full">
-                      <i className="w-4 h-4" />{" "}
+                      <i className="w-4 h-4" />
                     </div>
                     <div className="ml-3">Transactions Report</div>
                   </a>
@@ -209,7 +220,7 @@ const Header_ = () => {
                 className="notification__icon dark:text-slate-500"
                 color="white"
                 size={22}
-              />{" "}
+              />
             </div>
             <div className="notification-content pt-2 dropdown-menu">
               <div className="notification-content__box dropdown-content">
@@ -219,7 +230,7 @@ const Header_ = () => {
                     <img
                       alt="Midone - HTML Admin Template"
                       className="rounded-full"
-                      src="dist/images/profile-10.jpg"
+                      src="dist/images/avatar.png"
                     />
                     <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
                   </div>
@@ -235,107 +246,7 @@ const Header_ = () => {
                     <div className="w-full truncate text-slate-500 mt-0.5">
                       It is a long established fact that a reader will be
                       distracted by the readable content of a page when looking
-                      at its layout. The point of using Lorem{" "}
-                    </div>
-                  </div>
-                </div>
-                <div className="cursor-pointer relative flex items-center mt-5">
-                  <div className="w-12 h-12 flex-none image-fit mr-1">
-                    <img
-                      alt="Midone - HTML Admin Template"
-                      className="rounded-full"
-                      src="dist/images/profile-5.jpg"
-                    />
-                    <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
-                  </div>
-                  <div className="ml-2 overflow-hidden">
-                    <div className="flex items-center">
-                      <a href="#" className="font-medium truncate mr-5">
-                        Keanu Reeves
-                      </a>
-                      <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                        05:09 AM
-                      </div>
-                    </div>
-                    <div className="w-full truncate text-slate-500 mt-0.5">
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever since the 1500
-                    </div>
-                  </div>
-                </div>
-                <div className="cursor-pointer relative flex items-center mt-5">
-                  <div className="w-12 h-12 flex-none image-fit mr-1">
-                    <img
-                      alt="Midone - HTML Admin Template"
-                      className="rounded-full"
-                      src="dist/images/profile-7.jpg"
-                    />
-                    <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
-                  </div>
-                  <div className="ml-2 overflow-hidden">
-                    <div className="flex items-center">
-                      <a href="#" className="font-medium truncate mr-5">
-                        Angelina Jolie
-                      </a>
-                      <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                        05:09 AM
-                      </div>
-                    </div>
-                    <div className="w-full truncate text-slate-500 mt-0.5">
-                      Contrary to popular belief, Lorem Ipsum is not simply
-                      random text. It has roots in a piece of classical Latin
-                      literature from 45 BC, making it over 20
-                    </div>
-                  </div>
-                </div>
-                <div className="cursor-pointer relative flex items-center mt-5">
-                  <div className="w-12 h-12 flex-none image-fit mr-1">
-                    <img
-                      alt="Midone - HTML Admin Template"
-                      className="rounded-full"
-                      src="dist/images/profile-2.jpg"
-                    />
-                    <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
-                  </div>
-                  <div className="ml-2 overflow-hidden">
-                    <div className="flex items-center">
-                      <a href="#" className="font-medium truncate mr-5">
-                        Robert De Niro
-                      </a>
-                      <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                        01:10 PM
-                      </div>
-                    </div>
-                    <div className="w-full truncate text-slate-500 mt-0.5">
-                      Contrary to popular belief, Lorem Ipsum is not simply
-                      random text. It has roots in a piece of classical Latin
-                      literature from 45 BC, making it over 20
-                    </div>
-                  </div>
-                </div>
-                <div className="cursor-pointer relative flex items-center mt-5">
-                  <div className="w-12 h-12 flex-none image-fit mr-1">
-                    <img
-                      alt="Midone - HTML Admin Template"
-                      className="rounded-full"
-                      src="dist/images/profile-9.jpg"
-                    />
-                    <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
-                  </div>
-                  <div className="ml-2 overflow-hidden">
-                    <div className="flex items-center">
-                      <a href="#" className="font-medium truncate mr-5">
-                        Johnny Depp
-                      </a>
-                      <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                        01:10 PM
-                      </div>
-                    </div>
-                    <div className="w-full truncate text-slate-500 mt-0.5">
-                      Contrary to popular belief, Lorem Ipsum is not simply
-                      random text. It has roots in a piece of classical Latin
-                      literature from 45 BC, making it over 20
+                      at its layout. The point of using Lorem
                     </div>
                   </div>
                 </div>
@@ -353,49 +264,33 @@ const Header_ = () => {
             >
               <img
                 alt="Midone - HTML Admin Template"
-                src="dist/images/profile-4.jpg"
+                src="dist/images/avatar.png"
               />
             </div>
             <div className="dropdown-menu w-56">
               <ul className="dropdown-content bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
                 <li className="p-2">
-                  <div className="font-medium">Al Pacino</div>
+                  <div className="font-medium">{profile.fullname}</div>
                   <div className="text-xs text-white/60 mt-0.5 dark:text-slate-500">
-                    Software Engineer
+                    {profile.deptname} {"[" + profile.dept + "]"}
                   </div>
                 </li>
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />
                 </li>
                 <li onClick={onClick}>
-                  <Link href={"/ipd"}>
-                    <a className="dropdown-item hover:bg-white/5">
-                      <i className="w-4 h-4 mr-2" /> Profile
-                    </a>
-                  </Link>
+                  <Link href={"/ipd"}>Profile</Link>
                 </li>
-                <li>
-                  <a className="dropdown-item hover:bg-white/5">
-                    <i className="w-4 h-4 mr-2" /> Add Account{" "}
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item hover:bg-white/5">
-                    <i className="w-4 h-4 mr-2" /> Reset Password{" "}
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item hover:bg-white/5">
-                    <i className="w-4 h-4 mr-2" /> Help{" "}
-                  </a>
-                </li>
+
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />
                 </li>
                 <li>
-                  <a className="dropdown-item hover:bg-white/5">
-                    <i className="w-4 h-4 mr-2" /> Logout{" "}
-                  </a>
+                  <Link href={"/login"}>
+                    <a className="dropdown-item hover:bg-white/5">
+                      <i className="w-4 h-4 mr-2" /> Logout
+                    </a>
+                  </Link>
                 </li>
               </ul>
             </div>

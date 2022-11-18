@@ -10,6 +10,7 @@ const Users_ = () => {
   const [data, setData] = useState([]);
   const [dataDept, setDataDept] = useState([]);
   const [open, setOpen] = useState(false);
+  const [clickStatus, setclickStatus] = useState('');
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -92,6 +93,7 @@ const Users_ = () => {
   };
   const onEdit = async (username) => {
     setOpen(true);
+    setclickStatus('edit')
     console.log(username);
     const token = localStorage.getItem("token");
     try {
@@ -149,6 +151,11 @@ const Users_ = () => {
     setOpen(false);
   };
 
+  const openModal =()=>{
+    setclickStatus('add')
+    setOpen(true)
+  }
+
   return (
     <div className="col-12 mt-6">
       <div className="intro-y    h-10">
@@ -176,7 +183,7 @@ const Users_ = () => {
                     className="btn btn-success  mr-2 mb-2 ml-2 col-span-2  w-40"
                     // data-tw-toggle="modal"
                     // data-tw-target="#header-footer-modal-preview"
-                    onClick={() => setOpen(true)}
+                    onClick={() => openModal()}
                   >
                     <Plus
                       className="top-menu__sub-icon "
@@ -199,7 +206,7 @@ const Users_ = () => {
                     <th className="whitespace-nowrap">username</th>
                     <th className="whitespace-nowrap">password</th>
                     <th className="whitespace-nowrap">เลขบัตรประชาชน</th>
-                    <th className="whitespace-nowrap">แผนก</th>
+                    <th className="whitespace-nowrap">หน่วยงาน</th>
                     {/* <th className="whitespace-nowrap">จำนวนการนัด</th> */}
                     <th className="whitespace-nowrap">สถานะ</th>
                     <th className="whitespace-nowrap">#</th>
@@ -298,9 +305,10 @@ const Users_ = () => {
                   />
                 </Form.Item>
                 <Form.Item label="username" rules={[{ required: true }]}>
+                  {console.log(clickStatus)}
                   <Input
                     value={formData.username}
-                    disabled = { formData.username == '' ?  false :   true}
+                    disabled = {  clickStatus == 'add' ?  false :   true}
                     onChange={(e) => {
                       setFormData({ ...formData, username: e.target.value });
                     }}
@@ -315,7 +323,7 @@ const Users_ = () => {
                     }}
                   />
                 </Form.Item>
-                <Form.Item label="แผนก">
+                <Form.Item label="หน่วยงาน">
                   <Select
                     value={formData.dept}
                     onChange={onSelectDept}
