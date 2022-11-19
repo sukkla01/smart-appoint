@@ -27,7 +27,7 @@ import jwt_decode from "jwt-decode";
 const BASE_URL = config.BASE_URL;
 
 const Appoint = () => {
-  const [data, setData] = useState([1, 2, 3, 4, 5]);
+  const [data, setData] = useState([]);
   const [formData, setFormData] = useState({ cid: "", user_send: '' });
   const [dataPatient, setDataPatient] = useState([]);
   const [dataHistory, setDataHistory] = useState([]);
@@ -38,6 +38,7 @@ const Appoint = () => {
   const [dataReason, setDataReason] = useState([]);
   const [dataPttype, setDataPttype] = useState([]);
   const [dataKskdepart, setDataKskdepart] = useState([]);
+  const [activeModal, setActiveModal] = useState(2);
   const [checkLimit, setCheckLimit] = useState([
     { toapp: 0, totallimit: 0, isLimit: false },
   ]);
@@ -101,9 +102,9 @@ const Appoint = () => {
     setFormData({ ...formData, user_send: decoded.deptname })
   };
 
-  const getPatientId = async () => {
+  const getPatientId = async (cid) => {
     const token = localStorage.getItem("token");
-    let md5_cid = md5(formData.cid);
+    let md5_cid = md5(cid);
     try {
       let res = await axios.get(`${BASE_URL}/get-patient-id/${md5_cid}`, {
         headers: { token: token },
@@ -124,7 +125,7 @@ const Appoint = () => {
       });
       setDataHistory(res.data);
       console.log(res.data)
-      
+
     } catch (error) {
       console.log(error);
     }
@@ -392,7 +393,7 @@ const Appoint = () => {
             onClick={() =>
               formData.cid == ""
                 ? openNotificationWithIcon("error")
-                : getPatientId()
+                : getPatientId(formData.cid)
             }
           >
             <Plus
@@ -442,90 +443,95 @@ const Appoint = () => {
             <tbody style={{ marginTop: -50 }}>
               {dataHistory.map((item, i) => {
                 return (
-                  <Link href={`/patient`}>
-                    <tr className="intro-x cursor-pointer" key={i}>
-                      <td className="w-20">
-                        <div className="flex">
-                          <div className="w-12 h-12 image-fit zoom-in">
-                            <img
-                              alt="Midone - HTML Admin Template"
-                              className="tooltip rounded-full"
-                              src="dist/images/avatar.png"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="text-lg"> {item.tname} </span>
 
-                        <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                          <span className="mr-2"> HN :  {item.hn} </span> |
-                          <span className="ml-2">คลินิก :  {item.cname}</span>
+                  <tr className="intro-x cursor-pointer" key={i}  
+                   onClick={()=>{
+                    getPatientId(item.cid)
+                    setOpen(true)
+                   }}
+                  >
+                    <td className="w-20">
+                      <div className="flex">
+                        <div className="w-12 h-12 image-fit zoom-in">
+                          <img
+                            alt="Midone - HTML Admin Template"
+                            className="tooltip rounded-full"
+                            src="dist/images/avatar.png"
+                          />
                         </div>
-                      </td>
-                      <td className="text-left w-24">
-                        <span className="text-sm"> {moment(item.nextdate).format('DD/MM/yyyy')} </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="text-lg"> {item.tname} </span>
 
-                        <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                          <span className="mr-2"> วันที่นัด</span>
-                        </div>
-                      </td>
-                      <td className="text-center w-20">
-                        <span className="text-sm">  {item.tage} ปี </span>
+                      <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                        <span className="mr-2"> HN :  {item.hn} </span> |
+                        <span className="ml-2">คลินิก :  {item.cname}</span>
+                      </div>
+                    </td>
+                    <td className="text-left w-24">
+                      <span className="text-sm"> {moment(item.nextdate).format('DD/MM/yyyy')} </span>
 
-                        <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                          <span className="mr-2"> อายุ</span>
-                        </div>
-                      </td>
+                      <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                        <span className="mr-2"> วันที่นัด</span>
+                      </div>
+                    </td>
+                    <td className="text-center w-20">
+                      <span className="text-sm">  {item.tage} ปี </span>
 
-                      <td className="table-report__action w-32">
-                        <div className="flex justify-center items-center">
-                          <a className="flex items-center mr-3">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width={24}
-                              height={24}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              icon-name="check-square"
-                              data-lucide="check-square"
-                              className="lucide lucide-check-square w-4 h-4 mr-1"
-                            >
-                              <polyline points="9 11 12 14 22 4" />
-                              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-                            </svg>
-                            Edit
-                          </a>
-                          <a className="flex items-center text-danger">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width={24}
-                              height={24}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              icon-name="trash-2"
-                              data-lucide="trash-2"
-                              className="lucide lucide-trash-2 w-4 h-4 mr-1"
-                            >
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                              <line x1={10} y1={11} x2={10} y2={17} />
-                              <line x1={14} y1={11} x2={14} y2={17} />
-                            </svg>
-                            Delete
-                          </a>
-                        </div>
-                      </td>
-                    </tr>
-                  </Link>
+                      <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                        <span className="mr-2"> อายุ</span>
+                      </div>
+                    </td>
+
+                    <td className="table-report__action w-32">
+                      <div className="flex justify-center items-center">
+                        <a className="flex items-center mr-3">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            icon-name="check-square"
+                            data-lucide="check-square"
+                            className="lucide lucide-check-square w-4 h-4 mr-1"
+                          >
+                            <polyline points="9 11 12 14 22 4" />
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                          </svg>
+                          Edit
+                        </a>
+                        <a className="flex items-center text-danger">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            icon-name="trash-2"
+                            data-lucide="trash-2"
+                            className="lucide lucide-trash-2 w-4 h-4 mr-1"
+                          >
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                            <line x1={10} y1={11} x2={10} y2={17} />
+                            <line x1={14} y1={11} x2={14} y2={17} />
+                          </svg>
+                          Delete
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+
                 );
               })}
             </tbody>
@@ -596,23 +602,42 @@ const Appoint = () => {
           </div>
           <div>
             <ul
-              className="nav nav-link-tabs col-6 "
+              className="nav nav-link-tabs  "
               role="tablist"
-              style={{ width: 500 }}
+              style={{ width: 600 }}
             >
+              <li
+                id="example-4-tab"
+                className="nav-item flex-1"
+                role="presentation"
+              >
+                <button
+                  className={activeModal == 1 ? "nav-link w-full py-2 active" : "nav-link w-full py-2 "}
+                  data-tw-toggle="pill"
+                  data-tw-target="#example-tab-4"
+                  type="button"
+                  role="tab"
+                  aria-controls="example-tab-4"
+                  aria-selected="true"
+                  onClick={() => setActiveModal(1)}
+                >
+                  ประวัติการนัด
+                </button>
+              </li>
               <li
                 id="example-5-tab"
                 className="nav-item flex-1"
                 role="presentation"
               >
                 <button
-                  className="nav-link w-full py-2 active"
+                  className={activeModal == 2 ? "nav-link w-full py-2 active" : "nav-link w-full py-2 "}
                   data-tw-toggle="pill"
                   data-tw-target="#example-tab-5"
                   type="button"
                   role="tab"
                   aria-controls="example-tab-5"
                   aria-selected="true"
+                  onClick={() => setActiveModal(2)}
                 >
                   บันทึกรายการนัด
                 </button>
@@ -623,13 +648,15 @@ const Appoint = () => {
                 role="presentation"
               >
                 <button
-                  className="nav-link w-full py-2"
+                  className={activeModal == 3 ? "nav-link w-full py-2 active" : "nav-link w-full py-2 "}
+
                   data-tw-toggle="pill"
                   data-tw-target="#example-tab-6"
                   type="button"
                   role="tab"
                   aria-controls="example-tab-6"
                   aria-selected="false"
+                  onClick={() => setActiveModal(3)}
                 >
                   สั่ง Lab ล่วงหน้า
                 </button>
@@ -640,13 +667,15 @@ const Appoint = () => {
                 role="presentation"
               >
                 <button
-                  className="nav-link w-full py-2"
+                  className={activeModal == 4 ? "nav-link w-full py-2 active" : "nav-link w-full py-2 "}
+
                   data-tw-toggle="pill"
                   data-tw-target="#example-tab-7"
                   type="button"
                   role="tab"
                   aria-controls="example-tab-7"
                   aria-selected="false"
+                  onClick={() => setActiveModal(4)}
                 >
                   สั่ง x-ray ล่วงหน้า
                 </button>
@@ -654,8 +683,17 @@ const Appoint = () => {
             </ul>
             <div className="tab-content mt-2">
               <div
+                id="example-tab-4"
+                className={activeModal == 1 ? "tab-pane leading-relaxed active" : "tab-pane leading-relaxed"}
+                role="tabpanel"
+                aria-labelledby="example--tab"
+              >
+                <button className="btn btn-success" onClick={() => setActiveModal(2)}>ddd</button>
+              </div>
+              <div
                 id="example-tab-5"
-                className="tab-pane leading-relaxed active"
+                className={activeModal == 2 ? "tab-pane leading-relaxed active" : "tab-pane leading-relaxed"}
+
                 role="tabpanel"
                 aria-labelledby="example-5-tab"
               >
@@ -864,7 +902,7 @@ const Appoint = () => {
                               filterData.vstdate != null &&
                               filterData.clinic != null
                               ? ""
-                              : "จำนวนการนัด"}{" "}
+                              : "จำนวนการนัด"}
                           </div>
                           <div style={{ fontSize: 26 }}>
                             {dataDoctor.length == 0 &&
@@ -950,7 +988,7 @@ const Appoint = () => {
               </div>
               <div
                 id="example-tab-6"
-                className="tab-pane leading-relaxed"
+                className={activeModal == 3 ? "tab-pane leading-relaxed active" : "tab-pane leading-relaxed"}
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
@@ -958,7 +996,8 @@ const Appoint = () => {
               </div>
               <div
                 id="example-tab-7"
-                className="tab-pane leading-relaxed"
+                className={activeModal == 4 ? "tab-pane leading-relaxed active" : "tab-pane leading-relaxed"}
+
                 role="tabpanel"
                 aria-labelledby="example-7-tab"
               >
