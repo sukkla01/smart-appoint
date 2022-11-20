@@ -24,6 +24,88 @@ const Xray = () => {
   });
 
 
+  useEffect(() => {
+    getXrayItem()
+    getRoom()
+    getPosture()
+    getSide()
+  }, []);
+
+  const getXrayItem = async () => {
+    const token = localStorage.getItem("token");
+    let tmp = [];
+    try {
+      let res = await axios.get(`${BASE_URL}/get-xray-item`, {
+        headers: { token: token },
+      });
+      res.data.map((item, i) => {
+        tmp.push({
+          value: item.xray_items_code,
+          label: item.xray_items_name,
+        });
+      });
+      setDataItem(tmp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getRoom = async () => {
+    const token = localStorage.getItem("token");
+    let tmp = [];
+    try {
+      let res = await axios.get(`${BASE_URL}/get-xray-room`, {
+        headers: { token: token },
+      });
+      res.data.map((item, i) => {
+        tmp.push({
+          value: item.xray_room,
+          label: item.name,
+        });
+      });
+      setDataRoom(tmp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getPosture = async () => {
+    const token = localStorage.getItem("token");
+    let tmp = [];
+    try {
+      let res = await axios.get(`${BASE_URL}/get-xray-posture`, {
+        headers: { token: token },
+      });
+      res.data.map((item, i) => {
+        tmp.push({
+          value: item.xray_type,
+          label: item.name,
+        });
+      });
+      setDataPosture(tmp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getSide = async () => {
+    const token = localStorage.getItem("token");
+    let tmp = [];
+    try {
+      let res = await axios.get(`${BASE_URL}/get-xray-side`, {
+        headers: { token: token },
+      });
+      res.data.map((item, i) => {
+        tmp.push({
+          value: item.xray_side,
+          label: item.name,
+        });
+      });
+      setDataSide(tmp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
   return (
     <div className="grid grid-cols-12 gap-3">
       <div className="col-span-12 lg:col-span-12">
@@ -38,7 +120,7 @@ const Xray = () => {
                 placeholder="-------เลือกรายการ x-ray--------"
                 optionFilterProp="children"
                 onChange={(e) => {
-                  onSelectLabForm(e);
+                  setFormData({...formData,xrayItem : e})
                 }}
                 // onSearch={onSearchClinic}
                 filterOption={(input, option) =>
@@ -60,7 +142,7 @@ const Xray = () => {
                 placeholder="-------เลือกห้อง--------"
                 optionFilterProp="children"
                 onChange={(e) => {
-                  onSelectLabForm(e);
+                  setFormData({...formData,room : e})
                 }}
                 // onSearch={onSearchClinic}
                 filterOption={(input, option) =>
@@ -82,7 +164,7 @@ const Xray = () => {
                 placeholder="-------เลือกท่า--------"
                 optionFilterProp="children"
                 onChange={(e) => {
-                  onSelectLabForm(e);
+                  setFormData({...formData,posture : e})
                 }}
                 // onSearch={onSearchClinic}
                 filterOption={(input, option) =>
@@ -104,7 +186,7 @@ const Xray = () => {
                 placeholder="-------เลือกด้าน--------"
                 optionFilterProp="children"
                 onChange={(e) => {
-                  onSelectLabForm(e);
+                  setFormData({...formData,side : e})
                 }}
                 // onSearch={onSearchClinic}
                 filterOption={(input, option) =>
