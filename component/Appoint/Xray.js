@@ -1,49 +1,144 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import * as moment from "moment";
+import "moment/locale/th";
+moment.locale("th");
+import th_TH from "antd/lib/locale/th_TH";
+import axios from "axios";
+import { Select } from "antd";
+import { Plus, FlaskConical, Search } from "lucide-react";
+
+import config from "../../config";
+
+const BASE_URL = config.BASE_URL;
 
 const Xray = () => {
+  const [dataItem, setDataItem] = useState([]);
+  const [dataRoom, setDataRoom] = useState([]);
+  const [dataPosture, setDataPosture] = useState([]);
+  const [dataSide, setDataSide] = useState([]);
+  const [formData, setFormData] = useState({
+    xrayItem: null,
+    room: null,
+    posture: null,
+    side: null,
+  });
+
+
   return (
     <div className="grid grid-cols-12 gap-3">
-    {/* //--------------------------------------------------------- START เลือกวันที่  -------------------------------------------------------------------// */}
-    <div className="col-span-12 lg:col-span-8">
+      <div className="col-span-12 lg:col-span-12">
         <div className="box intro-y mt-3">
-            <div className="box grid grid-cols-12">
-                <div className="col-span-12 lg:col-span-6 px-4 py-4">
-                    <label className="form-label">เริ่มวันที่</label>
-                    <div>
-                       
-                    </div>
-                </div>
-                <div className="col-span-12 lg:col-span-6 px-4 py-4">
-                    <label className="form-label">ถึงวันที่</label>
-                    <div>
-                       
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {/* //------------------------------------------------------------- END เลือกวันที่  ------------------------------------------------------------------// */}
+          <div className="box grid grid-cols-12 p-5">
+            เลือกรายการ x-ray
 
-    {/* //------------------------------------------------------------- START ระบุเพศ  ------------------------------------------------------------------// */}
-    <div className="col-span-12 lg:col-span-4">
-        <div className="box intro-y mt-3">
-            <div className="box grid grid-cols-12">
-                <div className="col-span-12 lg:col-span-12 px-4 py-4">
-                    <label className="form-label">เพศ</label>
-                    <div className="sm:grid grid-cols-2">
-                        <div className="input-group">
-                            {/* <button className={formConditions.sexMale == true ? "btn btn-primary w-full mr-1" : "btn btn-outline-primary w-full mr-1"} onClick={() => setFormConditions({ ...formConditions, sexMale: !formConditions.sexMale })}>ชาย</button> */}
-                        </div>
-                        <div className="input-group">
-                            {/* <button className="btn btn-danger w-full ml-1" : "btn btn-outline-danger w-full ml-1"} onClick={() => setFormConditions({ ...formConditions, sexFemale: !formConditions.sexFemale })}>หญิง</button> */}
-                        </div>
-                    </div>
-                </div>
+            <Select
+              style={{ width: 280, marginLeft: 5, paddingTop: -50 }}
+              // size='large'
+              showSearch
+              placeholder="-------เลือกรายการ x-ray--------"
+              optionFilterProp="children"
+              onChange={(e) => {
+                onSelectLabForm(e);
+              }}
+              // onSearch={onSearchClinic}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={dataItem}
+              value={
+                (formData.xrayItem = null
+                  ? null
+                  : formData.xrayItem)
+              }
+            />
+            <Select
+              style={{ width: 180, marginLeft: 170, paddingTop: -50 }}
+              // size='large'
+              showSearch
+              placeholder="-------เลือกห้อง--------"
+              optionFilterProp="children"
+              onChange={(e) => {
+                onSelectLabForm(e);
+              }}
+              // onSearch={onSearchClinic}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={dataRoom}
+              value={
+                (formData.room = null
+                  ? null
+                  : formData.room)
+              }
+            />
+            <Select
+              style={{ width: 180, marginLeft: 235, paddingTop: -50 }}
+              // size='large'
+              showSearch
+              placeholder="-------เลือกท่า--------"
+              optionFilterProp="children"
+              onChange={(e) => {
+                onSelectLabForm(e);
+              }}
+              // onSearch={onSearchClinic}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={dataPosture}
+              value={
+                (formData.posture = null
+                  ? null
+                  : formData.posture)
+              }
+            />
+            <Select
+              style={{ width: 180, marginLeft: 300, paddingTop: -50 }}
+              // size='large'
+              showSearch
+              placeholder="-------เลือกด้าน--------"
+              optionFilterProp="children"
+              onChange={(e) => {
+                onSelectLabForm(e);
+              }}
+              // onSearch={onSearchClinic}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={dataSide}
+              value={
+                (formData.side = null
+                  ? null
+                  : formData.side)
+              }
+
+            />
+
+            {/* <div className="col-span-12 lg:col-span-6 px-4 py-4">
+              <label className="form-label">เริ่มวันที่</label>
+              <div>
+
+              </div>
             </div>
+            <div className="col-span-12 lg:col-span-6 px-4 py-4">
+              <label className="form-label">ถึงวันที่</label>
+              <div>
+
+              </div>
+            </div> */}
+          </div>
         </div>
+      </div>
+
+
     </div>
-    {/* //------------------------------------------------------------- END ระบุเพศ  ------------------------------------------------------------------// */}
-</div>
   )
 }
 
