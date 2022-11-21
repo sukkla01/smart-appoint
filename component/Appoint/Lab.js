@@ -5,7 +5,7 @@ moment.locale("th");
 import th_TH from "antd/lib/locale/th_TH";
 import axios from "axios";
 import { Select } from "antd";
-import { Plus, FlaskConical, Search } from "lucide-react";
+import { Plus, FlaskConical, ArrowRight } from "lucide-react";
 
 import config from "../../config";
 
@@ -138,61 +138,101 @@ const Lab = () => {
         </div>
       </div>
 
-      <div className="box intro-y mt-3">
-        <div className="box">
-          <div className="intro-y box p-5 ">
 
-            <div className="col-span-12 lg:col-span-8 ">
-              <div className="box intro-y  ">
-                <div className="col-span-12 lg:col-span-12 px-4 ">
-                  <div style={{ fontSize: 16 }}>
-                    <div className="flex  ">
-                      <FlaskConical size={22} />
-                      <span className="  truncate ml-2">เลือกรายการ Lab</span>
-                    </div>
-                  </div>
-                  <hr />
-                  <div className="form-check mt-5">
-                    <>
+      <div className=" grid grid-cols-12 gap-3">
 
-                      <div className="intro-y col-span-12 p items-center mt-0">
-                        {dataLabItem.map((item, i) => {
-                          // console.log(dataLabSelect.filter(dlab => dlab.lab_code==item.))
-                          // let iTmp = false
-                          // dataLabSelect.map((ite,i)=>{
-                          //   iTmp  = iTmp.lab_code ==  item.lab_items_code
-                          // })
-                          let ls = dataLabSelect.find(e => e.lab_code == item.lab_items_code)
 
-                          console.log(ls)
+        <div className="col-span-12 lg:col-span-8">
+          <div className="box intro-y mt-3">
+            <div className="box">
+              <div className="intro-y box p-5 mt-5 sm:mt-2">
+                <div className="col-span-12 lg:col-span-12 ">
+                  <div className="intro-y col-span-12 p items-center mt-0">
+                    <div>เลือกรายการ Lab</div>
+                    <hr ></hr>
+                    {dataLabItem.map((item, i) => {
+                      let tmp = dataLabSelect.find(c => c.lab_code == item.lab_items_code)
+                      let tmp_arr = tmp == undefined ? '' : tmp.lab_code
+                      return (
+                        <>
+                          {item.component_type == 'label' ? <div style={{ fontSize: item.font_size > 0 ? item.font_size : 16, marginTop: 20 }}><b>{item.component_caption}</b> <br /><hr /></div> :
+                            <button className={tmp_arr > 0 ? "btn btn-success btn-sm  mr-2  mt-2 w-48" : "btn btn-outline-success btn-sm  mr-2  mt-2 w-48"}
+                              onClick={() => onClickLab(item.lab_items_code, item.component_caption)}
+                            >
+                              {i + 1}. {item.component_caption}
+                            </button>
+                          }
+                        </>
+                      );
+                    })}
 
-                          console.log(dataLabSelect.length != 'undefined' ? ls.lab_code == item.lab_items_code : false)
-
-                          // console.log(dataLabSelect.find(c => c.lab_code == item.lab_items_code));
-                          return (
-                            <>
-                              {item.component_type == 'label' ? <div style={{ fontSize: item.font_size > 0 ? item.font_size : 16, marginTop: 20 }}><b>{item.component_caption}</b> <br /><hr /></div> :
-                                <button className={item.status ? "btn btn-success btn-sm  mr-2  mt-2 w-48" : "btn btn-outline-success btn-sm  mr-2  mt-2 w-48"}
-                                  onClick={() => onClickLab(item.lab_items_code, item.component_caption)}
-                                >
-                                  {i + 1}. {item.component_caption}
-                                </button>
-                              }
-                            </>
-                          );
-                        })}
+                    <div className="flex flex-col sm:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                      
+                      <div className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
+                        <button className="btn btn-primary">เพิ่มรายการ  <ArrowRight className="top-menu__sub-icon ml-3" size={14} /></button>
                       </div>
+                    </div>
 
 
-                    </>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
+
+        <div className="col-span-12 lg:col-span-4">
+          <div className="box intro-y mt-3" >
+            <div className="col-span-12 lg:col-span-12 px-4 py-4">
+              <div>รายการที่สั่งไว้</div>
+              <div className="box px-4 py-4 mb-1 flex items-center zoom-in " style={{ backgroundColor: '#E6F4F3' }}>
+                <div className=" flex-none image-fit ">
+                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
+                </div>
+                <div className="ml-4 mr-auto">
+                  <div className="font-medium">ANC</div>
+                </div>
+
+              </div>
+              <div className="box px-4 py-4 mb-1 flex items-center zoom-in" style={{ backgroundColor: '#E6F4F3' }}>
+                <div className=" flex-none image-fit ">
+                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
+                </div>
+                <div className="ml-4 mr-auto">
+                  <div className="font-medium">BLODD BLANK</div>
+                </div>
+
+              </div>
+              <div className="box px-4 py-4 mb-1 flex items-center zoom-in" style={{ backgroundColor: '#E6F4F3' }}>
+                <div className=" flex-none image-fit ">
+                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
+                </div>
+                <div className="ml-4 mr-auto">
+                  <div className="font-medium">BLODD BLANK</div>
+                </div>
+
+              </div>
+              <div className="box px-4 py-4 mb-1 flex items-center zoom-in" style={{ backgroundColor: '#E6F4F3' }}>
+                <div className=" flex-none image-fit ">
+                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
+                </div>
+                <div className="ml-4 mr-auto">
+                  <div className="font-medium">BLODD BLANK</div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
+
     </div>
+
+
+
   )
 }
 
