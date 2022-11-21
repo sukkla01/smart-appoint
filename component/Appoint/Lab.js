@@ -14,7 +14,9 @@ const BASE_URL = config.BASE_URL;
 const Lab = () => {
   const [dataLabForm, setDataLabForm] = useState([]);
   const [dataLabItem, setDataLabItem] = useState([]);
+  const [dataLabSelect, setDataLabSelect] = useState([]);
   const [labMainSelect, setDataLabMainSelect] = useState(null);
+  // const [selectItem, setSelectItem] = useState(null);
 
 
   useEffect(() => {
@@ -46,16 +48,47 @@ const Lab = () => {
   const onSelectLabForm = async (form_name) => {
     const token = localStorage.getItem("token");
     setDataLabMainSelect(form_name)
-    console.log(form_name)
+    let tmp = []
     try {
       let res = await axios.get(`${BASE_URL}/get-labform-item/${form_name}`, {
         headers: { token: token },
       });
-      console.log(res.data)
-      setDataLabItem(res.data);
+      // console.log(res.data)
+      if (res.data.length > 0) {
+        res.data.map((item, i) => {
+          // console.log({...item, status : false})
+          tmp.push({ ...item, status: false })
+          console.log(tmp)
+        })
+
+      }
+      setDataLabItem(tmp);
+
     } catch (error) {
       console.log(error);
     }
+  }
+
+
+  const onClickLab = (code, name) => {
+
+    let tmp = []
+    dataLabSelect.map((item, i) => {
+      tmp.push({ ...item, lab_form: labMainSelect, lab_code: item.lab_code })
+
+    })
+    tmp.push({ lab_form: labMainSelect, lab_code: code })
+    //   console.log(tmp)
+    //  let aa =  tmp.find(e=> e.lab_code == 1199)
+    //   console.log(aa)
+    setDataLabSelect(tmp)
+    //     dataLabItem.map((item, i) => {
+    //       tmp.push({ ...item, status: item.lab_items_codes == code ? true : false })
+    //     })
+    // console.log(tmp)
+    //     setDataLabItem(tmp)
+
+
   }
 
 
@@ -99,7 +132,7 @@ const Lab = () => {
 
 
               </div>
-            
+
             </div>
           </div>
         </div>
@@ -124,10 +157,24 @@ const Lab = () => {
 
                       <div className="intro-y col-span-12 p items-center mt-0">
                         {dataLabItem.map((item, i) => {
+                          // console.log(dataLabSelect.filter(dlab => dlab.lab_code==item.))
+                          // let iTmp = false
+                          // dataLabSelect.map((ite,i)=>{
+                          //   iTmp  = iTmp.lab_code ==  item.lab_items_code
+                          // })
+                          let ls = dataLabSelect.find(e => e.lab_code == item.lab_items_code)
+
+                          console.log(ls)
+
+                          console.log(dataLabSelect.length != 'undefined' ? ls.lab_code == item.lab_items_code : false)
+
+                          // console.log(dataLabSelect.find(c => c.lab_code == item.lab_items_code));
                           return (
                             <>
-                              {item.component_type == 'label' ? <div style={{ fontSize : item.font_size > 0 ? item.font_size : 16,marginTop : 20 }}><b>{item.component_caption}</b> <br/><hr/></div> :
-                                <button className="btn btn-outline-success btn-sm  mr-2  mt-2 w-48">
+                              {item.component_type == 'label' ? <div style={{ fontSize: item.font_size > 0 ? item.font_size : 16, marginTop: 20 }}><b>{item.component_caption}</b> <br /><hr /></div> :
+                                <button className={item.status ? "btn btn-success btn-sm  mr-2  mt-2 w-48" : "btn btn-outline-success btn-sm  mr-2  mt-2 w-48"}
+                                  onClick={() => onClickLab(item.lab_items_code, item.component_caption)}
+                                >
                                   {i + 1}. {item.component_caption}
                                 </button>
                               }

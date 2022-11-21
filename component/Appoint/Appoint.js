@@ -350,6 +350,12 @@ const Appoint = () => {
     }
   };
 
+
+  const onModalXray = (isModal, data) => {
+
+    console.log(data)
+  }
+
   return (
     <div className="col-12 mt-6">
       <style jsx>{`
@@ -444,11 +450,11 @@ const Appoint = () => {
               {dataHistory.map((item, i) => {
                 return (
 
-                  <tr className="intro-x cursor-pointer" key={i}  
-                   onClick={()=>{
-                    getPatientId(item.cid)
-                    setOpen(true)
-                   }}
+                  <tr className="intro-x cursor-pointer" key={i}
+                    onClick={() => {
+                      getPatientId(item.cid)
+                      setOpen(true)
+                    }}
                   >
                     <td className="w-20">
                       <div className="flex">
@@ -486,48 +492,7 @@ const Appoint = () => {
 
                     <td className="table-report__action w-32">
                       <div className="flex justify-center items-center">
-                        <a className="flex items-center mr-3">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            icon-name="check-square"
-                            data-lucide="check-square"
-                            className="lucide lucide-check-square w-4 h-4 mr-1"
-                          >
-                            <polyline points="9 11 12 14 22 4" />
-                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-                          </svg>
-                          Edit
-                        </a>
-                        <a className="flex items-center text-danger">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            icon-name="trash-2"
-                            data-lucide="trash-2"
-                            className="lucide lucide-trash-2 w-4 h-4 mr-1"
-                          >
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                            <line x1={10} y1={11} x2={10} y2={17} />
-                            <line x1={14} y1={11} x2={14} y2={17} />
-                          </svg>
-                          Delete
-                        </a>
+
                       </div>
                     </td>
                   </tr>
@@ -1001,7 +966,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-7-tab"
               >
-                <Xray />
+                <Xray onChange={onModalXray} />
               </div>
             </div>
           </div>

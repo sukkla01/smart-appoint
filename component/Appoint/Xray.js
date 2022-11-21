@@ -4,14 +4,16 @@ import "moment/locale/th";
 moment.locale("th");
 import th_TH from "antd/lib/locale/th_TH";
 import axios from "axios";
-import { Select } from "antd";
-import { Plus, FlaskConical, Search } from "lucide-react";
+import { Select, Popconfirm } from "antd";
+import { Plus, Trash } from "lucide-react";
 
 import config from "../../config";
 
 const BASE_URL = config.BASE_URL;
 
-const Xray = () => {
+const Xray = (props) => {
+
+  const [data, setData] = useState([]);
   const [dataItem, setDataItem] = useState([]);
   const [dataRoom, setDataRoom] = useState([]);
   const [dataPosture, setDataPosture] = useState([]);
@@ -29,7 +31,7 @@ const Xray = () => {
     getRoom()
     getPosture()
     getSide()
-  }, []);
+  }, [props]);
 
   const getXrayItem = async () => {
     const token = localStorage.getItem("token");
@@ -40,7 +42,7 @@ const Xray = () => {
       });
       res.data.map((item, i) => {
         tmp.push({
-          value: item.xray_items_code,
+          value: item.xray_items_code + ',' + item.xray_items_name,
           label: item.xray_items_name,
         });
       });
@@ -58,7 +60,7 @@ const Xray = () => {
       });
       res.data.map((item, i) => {
         tmp.push({
-          value: item.xray_room,
+          value: item.xray_room + ',' + item.name,
           label: item.name,
         });
       });
@@ -76,7 +78,7 @@ const Xray = () => {
       });
       res.data.map((item, i) => {
         tmp.push({
-          value: item.xray_type,
+          value: item.xray_type + ',' + item.name,
           label: item.name,
         });
       });
@@ -94,7 +96,7 @@ const Xray = () => {
       });
       res.data.map((item, i) => {
         tmp.push({
-          value: item.xray_side,
+          value: item.xray_side + ',' + item.name,
           label: item.name,
         });
       });
@@ -104,112 +106,176 @@ const Xray = () => {
     }
   };
 
+  const onSubmit = () => {
+    let tmp = []
+    // formData.map((item,i)=>{
+    //    tmp.push({'xrayItem' : item.xrayItem.split(',')[1]})
 
+    // })
+    // setData(tmp)
+    let no = 1
+    data.map((item, i) => {
+      no = no + i
+      tmp.push({
+        'id': no, 'xrayItem': item.xrayItem, 'room': item.room, 'posture': item.posture, 'side': item.side,
+        'xrayItem_id': item.xrayItem_id, 'room_id': item.room_id, 'posture_id': item.posture_id, 'side_id': item.side_id
+      })
+    })
+    tmp.push({
+      'id': data.length > 0 ? no + 1 : 1, 
+      'xrayItem': formData.xrayItem == null ? null : formData.xrayItem.split(',')[1], 
+      'room': formData.room == null ? null : formData.room.split(',')[1], 
+      'posture': formData.posture == null ? null : formData.posture.split(',')[1], 
+      'side': formData.side == null ? null : formData.side.split(',')[1],
+      'xrayItem_id': formData.xrayItem == null ? null : formData.xrayItem.split(',')[0], 
+      'room_id': formData.room == null ? null : formData.room.split(',')[0], 
+      'posture_id': formData.posture == null ? null : formData.posture.split(',')[0], 
+      'side_id': formData.side == null ? null : formData.side.split(',')[0]
+    })
+    // tmp.push({
+    //     'xrayItem': 1, 'room': 1, 'posture': 1, 'side':1,
+    //     'xrayItem_id': 1, 'room_id': 1, 'posture_id': 1, 'side_id': 1
+    //   })
+    setData(tmp)
+    props.onChange(false, tmp);
+
+  }
+
+  const del = (id) => {
+    let tmp = data.filter(function (item) {
+      return item.id !== id
+    })
+
+    console.log(tmp)
+    setData(tmp)
+    props.onChange(false, tmp);
+   
+  }
+  const reset = () => {
+    setData({
+      ...formData,
+      xrayItem: null,
+      room: null,
+      posture: null,
+      side: null,
+    })
+  }
 
   return (
-    <div className="grid grid-cols-12 gap-3">
-      <div className="col-span-12 lg:col-span-12">
-        <div className="box intro-y mt-3">
-          <div className="box grid grid-cols-12 p-5">
-            <div className="intro-y flex items-center h-2 mt-3 mb-3">
-              {/* <div className="mr-3 text-xl"> เลือกรายการ x-ray</div> */}
-              <Select
-                style={{ width: 280, marginLeft: 5, paddingTop: -50 }}
-                // size='large'
-                showSearch
-                placeholder="-------เลือกรายการ x-ray--------"
-                optionFilterProp="children"
-                onChange={(e) => {
-                  setFormData({...formData,xrayItem : e})
-                }}
-                // onSearch={onSearchClinic}
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={dataItem}
-                value={
-                  (formData.xrayItem = null
-                    ? null
-                    : formData.xrayItem)
-                }
-              />
-              <Select
-                style={{ width: 180, marginLeft: 5, paddingTop: -50 }}
-                // size='large'
-                showSearch
-                placeholder="-------เลือกห้อง--------"
-                optionFilterProp="children"
-                onChange={(e) => {
-                  setFormData({...formData,room : e})
-                }}
-                // onSearch={onSearchClinic}
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={dataRoom}
-                value={
-                  (formData.room = null
-                    ? null
-                    : formData.room)
-                }
-              />
-              <Select
-                style={{ width: 180, marginLeft: 5, paddingTop: -50 }}
-                // size='large'
-                showSearch
-                placeholder="-------เลือกท่า--------"
-                optionFilterProp="children"
-                onChange={(e) => {
-                  setFormData({...formData,posture : e})
-                }}
-                // onSearch={onSearchClinic}
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={dataPosture}
-                value={
-                  (formData.posture = null
-                    ? null
-                    : formData.posture)
-                }
-              />
-              <Select
-                style={{ width: 180, marginLeft: 5, paddingTop: -50 }}
-                // size='large'
-                showSearch
-                placeholder="-------เลือกด้าน--------"
-                optionFilterProp="children"
-                onChange={(e) => {
-                  setFormData({...formData,side : e})
-                }}
-                // onSearch={onSearchClinic}
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={dataSide}
-                value={
-                  (formData.side = null
-                    ? null
-                    : formData.side)
-                }
+    <div className="col-span-12 lg:col-span-8">
+      <div className="box intro-y mt-5">
+        <div className="box">
+          <div className="intro-y box p-5 mt-5 sm:mt-2">
+            <div className="col-span-12 lg:col-span-12 ">
+              <div className="intro-y flex items-center h-2 mt-3 mb-3">
+                {/* <div className="mr-3 text-xl"> เลือกรายการ x-ray</div> */}
 
-              />
+                <div className="col-span-12 lg:col-span-12 mt-1">
+                  เลือกรายการ
+                  <Select
+                    style={{ width: 280, marginLeft: 5, paddingTop: -50 }}
+                    // size='large'
+                    showSearch
+                    placeholder="-------เลือกรายการ x-ray--------"
+                    optionFilterProp="children"
+                    onChange={(e) => {
+                      console.log(e)
 
-              <button
-                className="btn btn-primary   ml-2 "
-              // onClick={onSearch}
-              >
-                <Plus className="top-menu__sub-icon mr-1" size={14} />
-              </button>
-              {/* <div className="col-span-12 lg:col-span-6 px-4 py-4">
+                      setFormData({ ...formData, xrayItem: e })
+                    }}
+                    // onSearch={onSearchClinic}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={dataItem}
+                    value={
+                      (formData.xrayItem = null
+                        ? null
+                        : formData.xrayItem)
+                    }
+                  />
+                  <Select
+                    style={{ width: 180, marginLeft: 5, paddingTop: -50 }}
+                    // size='large'
+                    showSearch
+                    placeholder="-------เลือกห้อง--------"
+                    optionFilterProp="children"
+                    onChange={(e) => {
+                      setFormData({ ...formData, room: e })
+                    }}
+                    // onSearch={onSearchClinic}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={dataRoom}
+                    value={
+                      (formData.room = null
+                        ? null
+                        : formData.room)
+                    }
+                  />
+                  <Select
+                    style={{ width: 180, marginLeft: 5, paddingTop: -50 }}
+                    // size='large'
+                    showSearch
+                    placeholder="-------เลือกท่า--------"
+                    optionFilterProp="children"
+                    onChange={(e) => {
+                      setFormData({ ...formData, posture: e })
+                    }}
+                    // onSearch={onSearchClinic}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={dataPosture}
+                    value={
+                      (formData.posture = null
+                        ? null
+                        : formData.posture)
+                    }
+                  />
+                  <Select
+                    style={{ width: 180, marginLeft: 5, paddingTop: -50 }}
+                    // size='large'
+                    showSearch
+                    placeholder="-------เลือกด้าน--------"
+                    optionFilterProp="children"
+                    onChange={(e) => {
+                      setFormData({ ...formData, side: e })
+                    }}
+                    // onSearch={onSearchClinic}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={dataSide}
+                    value={
+                      (formData.side = null
+                        ? null
+                        : formData.side)
+                    }
+
+                  />
+
+                  <button
+                    className="btn btn-primary   ml-2 "
+                    onClick={onSubmit}
+                  >
+                    <Plus className="top-menu__sub-icon mr-1" size={14} />
+                  </button>
+                </div>
+
+                <div className="col-span-12 lg:col-span-12 mt-4">
+
+                </div>
+                {/* <div className="col-span-12 lg:col-span-6 px-4 py-4">
               <label className="form-label">เริ่มวันที่</label>
               <div>
 
@@ -221,12 +287,74 @@ const Xray = () => {
 
               </div>
             </div> */}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div className="box intro-y mt-3">
+        <div className="box">
+          <div className="intro-y box p-5 ">
+
+            <div className="col-span-12 lg:col-span-8 ">
+              <div className="box intro-y  ">
+                <div className="col-span-12 lg:col-span-12 px-4 ">
+                  <table className="table mt-0">
+                    <thead
+                      className="bg-primary text-white s"
+                      style={{ borderTopLeftRadius: 10 }}
+                    >
+                      <tr>
+                        <th className="whitespace-nowrap">#</th>
+                        <th className="whitespace-nowrap">รายการ</th>
+                        <th className="whitespace-nowrap">ห้อง</th>
+                        <th className="whitespace-nowrap">ท่า</th>
+                        <th className="whitespace-nowrap">ด้าน</th>
+                        <th className="whitespace-nowrap">action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      {data.map((item, i) => {
+                        return (
+                          <tr key={i}>
+                            <td>{i + 1}</td>
+                            <td>{item.xrayItem}</td>
+                            <td>{item.room}</td>
+                            <td>{item.posture}</td>
+                            <td>{item.side}</td>
+                            <td>
+                              <div>
+                                <Popconfirm
+                                  title="คุณต้องการลบหรือไม่"
+                                  onConfirm={() => del(item.id)}
+                                  // onCancel={cancel}
+                                  okText="ตกลง"
+                                  cancelText="ออก"
+                                >
+                                  <button className="btn btn-danger mr-1 mb-2">
+                                    <Trash
+                                      className="top-menu__sub-icon "
+                                      size={14}
+                                    />
+                                  </button>
+                                </Popconfirm>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-
     </div>
   )
 }
