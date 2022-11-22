@@ -18,7 +18,7 @@ const HistoryVn = (props) => {
 
     useEffect(() => {
         getHistory()
-    }, []);
+    }, [props]);
 
     const getHistory = async () => {
         const token = localStorage.getItem("token");
@@ -26,7 +26,7 @@ const HistoryVn = (props) => {
 
 
         try {
-            let res = await axios.get(`${BASE_URL}/get-history-appoint-all/${decoded.deptname}`, {
+            let res = await axios.get(`${BASE_URL}/get-history-appoint-all/${decoded.deptname}/${props.cid}`, {
                 headers: { token: token },
             });
             console.log(res.data)

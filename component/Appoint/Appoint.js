@@ -484,6 +484,7 @@ const Appoint = () => {
                     onClick={() => {
                       getPatientId(item.cid)
                       setOpen(true)
+                      setFormData({...formData,cid : item.cid})
                     }}
                   >
                     <td className="w-20">
@@ -684,7 +685,7 @@ const Appoint = () => {
                 aria-labelledby="example--tab"
               >
                 {/* <button className="btn btn-success" onClick={() => setActiveModal(2)}>ddd</button> */}
-                <HistoryVn onChange={onModalHistory} />
+                <HistoryVn onChange={onModalHistory} cid={formData.cid} />
               </div>
               <div
                 id="example-tab-5"
