@@ -4,8 +4,8 @@ import "moment/locale/th";
 moment.locale("th");
 import th_TH from "antd/lib/locale/th_TH";
 import axios from "axios";
-import { Select } from "antd";
-import { Plus, FlaskConical, ArrowRight } from "lucide-react";
+import { Select, Popconfirm, notification } from "antd";
+import { Plus, FlaskConical, ArrowRight, Trash } from "lucide-react";
 
 import config from "../../config";
 
@@ -16,6 +16,8 @@ const Lab = () => {
   const [dataLabItem, setDataLabItem] = useState([]);
   const [dataLabSelect, setDataLabSelect] = useState([]);
   const [labMainSelect, setDataLabMainSelect] = useState(null);
+  const [dataLabGroupAll, setDataLabGroupAll] = useState([]);
+
   // const [selectItem, setSelectItem] = useState(null);
 
 
@@ -72,30 +74,64 @@ const Lab = () => {
 
   const onClickLab = (code, name) => {
 
+    if (labMainSelect == null) {
+      notification['error']({
+        message: "แจ้งเตือน",
+        description: "กรุณาเลือกใบ Lab",
+        duration: 5,
+        style: { backroundColor: "#164E63" },
+      });
+      return;
+    }
+
     let tmp = []
-    dataLabSelect.map((item, i) => {
+
+    let lab_delete = dataLabSelect.filter(e => e.lab_code != code);
+
+    lab_delete.map((item, i) => {
       tmp.push({ ...item, lab_form: labMainSelect, lab_code: item.lab_code })
 
     })
-    tmp.push({ lab_form: labMainSelect, lab_code: code })
-    //   console.log(tmp)
-    //  let aa =  tmp.find(e=> e.lab_code == 1199)
-    //   console.log(aa)
+    if (lab_delete.length == dataLabSelect.length) {
+      tmp.push({ lab_form: labMainSelect, lab_code: code })
+
+    }
     setDataLabSelect(tmp)
-    //     dataLabItem.map((item, i) => {
-    //       tmp.push({ ...item, status: item.lab_items_codes == code ? true : false })
-    //     })
-    // console.log(tmp)
-    //     setDataLabItem(tmp)
 
 
   }
 
+  const AddGroup = () => {
 
+    let tmp = []
+
+    let labgroup_delete = dataLabGroupAll.filter(e => e.group_name != labMainSelect);
+
+    labgroup_delete.map((item, i) => {
+      tmp.push({ 'group_name': item.group_name, 'item': item.item })
+
+    })
+    tmp.push({ 'group_name': labMainSelect, 'item': dataLabSelect })
+
+
+
+    setDataLabGroupAll(tmp)
+    setDataLabMainSelect(null)
+    setDataLabSelect([])
+    setDataLabItem([])
+  }
+
+
+  const deleteGroup = (group_name) => {
+    let labgroup_delete = dataLabGroupAll.filter(e => e.group_name != group_name);
+    setDataLabGroupAll(labgroup_delete)
+
+  }
   return (
     <div className="col-span-12 lg:col-span-8">
       <div className="box intro-y mt-5">
         <div className="box">
+          {console.log(dataLabGroupAll)}
           <div className="intro-y box p-5 mt-5 sm:mt-2">
             <div className="col-span-12 lg:col-span-12 ">
               <div className="intro-y flex items-center h-2 mt-3 mb-3">
@@ -158,6 +194,7 @@ const Lab = () => {
                           {item.component_type == 'label' ? <div style={{ fontSize: item.font_size > 0 ? item.font_size : 16, marginTop: 20 }}><b>{item.component_caption}</b> <br /><hr /></div> :
                             <button className={tmp_arr > 0 ? "btn btn-success btn-sm  mr-2  mt-2 w-48" : "btn btn-outline-success btn-sm  mr-2  mt-2 w-48"}
                               onClick={() => onClickLab(item.lab_items_code, item.component_caption)}
+                              key={i}
                             >
                               {i + 1}. {item.component_caption}
                             </button>
@@ -167,9 +204,12 @@ const Lab = () => {
                     })}
 
                     <div className="flex flex-col sm:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                      
+
                       <div className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
-                        <button className="btn btn-primary">เพิ่มรายการ  <ArrowRight className="top-menu__sub-icon ml-3" size={14} /></button>
+                        <button className={dataLabSelect.length > 0 ? "btn btn-primary" : "btn btn-secondary"}
+                          onClick={dataLabSelect.length > 0 ? AddGroup : ''}
+
+                        >เพิ่มรายการ  <ArrowRight className="top-menu__sub-icon ml-3" size={14} /></button>
                       </div>
                     </div>
 
@@ -186,42 +226,32 @@ const Lab = () => {
           <div className="box intro-y mt-3" >
             <div className="col-span-12 lg:col-span-12 px-4 py-4">
               <div>รายการที่สั่งไว้</div>
-              <div className="box px-4 py-4 mb-1 flex items-center zoom-in " style={{ backgroundColor: '#E6F4F3' }}>
-                <div className=" flex-none image-fit ">
-                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
-                </div>
-                <div className="ml-4 mr-auto">
-                  <div className="font-medium">ANC</div>
+              {dataLabGroupAll.map((item) => {
+                return <><div className="box px-4 py-4 mb-1 flex items-center zoom-in " style={{ backgroundColor: '#E6F4F3' }}>
+                  <div className=" flex-none image-fit ">
+                    <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
+                  </div>
+                  <div className="ml-4 mr-auto">
+                    <div className="font-medium">{item.group_name}</div>
+                  </div>
+                  <div className="text-success"> <Popconfirm
+                    title="คุณต้องการลบหรือไม่"
+                    onConfirm={() => deleteGroup(item.group_name)}
+                    // onCancel={cancel}
+                    okText="ตกลง"
+                    cancelText="ออก"
+                  ><Trash color="red" size={22} style={{ marginRight: 0, color: 'red' }} />
+                  </Popconfirm>
+                  </div>
+
                 </div>
 
-              </div>
-              <div className="box px-4 py-4 mb-1 flex items-center zoom-in" style={{ backgroundColor: '#E6F4F3' }}>
-                <div className=" flex-none image-fit ">
-                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
-                </div>
-                <div className="ml-4 mr-auto">
-                  <div className="font-medium">BLODD BLANK</div>
-                </div>
 
-              </div>
-              <div className="box px-4 py-4 mb-1 flex items-center zoom-in" style={{ backgroundColor: '#E6F4F3' }}>
-                <div className=" flex-none image-fit ">
-                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
-                </div>
-                <div className="ml-4 mr-auto">
-                  <div className="font-medium">BLODD BLANK</div>
-                </div>
 
-              </div>
-              <div className="box px-4 py-4 mb-1 flex items-center zoom-in" style={{ backgroundColor: '#E6F4F3' }}>
-                <div className=" flex-none image-fit ">
-                  <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
-                </div>
-                <div className="ml-4 mr-auto">
-                  <div className="font-medium">BLODD BLANK</div>
-                </div>
+                </>
+              })}
 
-              </div>
+
             </div>
 
           </div>
