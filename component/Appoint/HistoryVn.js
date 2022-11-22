@@ -37,7 +37,63 @@ const HistoryVn = (props) => {
     };
 
     return (
-        <div>History</div>
+        <div><div className="intro-y overflow-auto lg:overflow-visible mt-2 sm:mt-0">
+            <table className="table table-report sm:mt-0">
+                <tbody style={{ marginTop: -50 }}>
+                    {data.map((item, i) => {
+                        return (
+
+                            <tr className="intro-x cursor-pointer" key={i}
+                                style={{ marginTop: -10 }}
+                            >
+                                <td className="w-20">
+                                    <div className="flex">
+                                        <div className="w-12 h-12 image-fit zoom-in">
+                                            <img
+                                                alt="Midone - HTML Admin Template"
+                                                className="tooltip rounded-full"
+                                                src="dist/images/avatar.png"
+                                            />
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span className="text-lg"> {item.department} </span>
+
+                                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                        <span className="mr-2"> วันที่นัด  :  {moment(item.nextdate).format('DD/MM/yyyy')} </span> |
+                                        <span className="ml-2">คลินิก :  {item.cname}</span>
+                                    </div>
+                                </td>
+
+                                <td className="text-left w-24">
+                                    <span className="text-sm"> {moment(item.vstdate).format('DD/MM/yyyy')} </span>
+
+                                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                        <span className="mr-2"> วันที่มา</span>
+                                    </div>
+                                </td>
+                                <td className="text-left w-24">
+                                    <span className="text-sm">  {item.dname} </span>
+
+                                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                        <span className="mr-2"> แพทย์</span>
+                                    </div>
+                                </td>
+                                <td className="table-report__action w-32">
+                                    <span className="text-sm"> {item.dname} </span>
+
+                                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                        <span className="mr-2"> แพทย์</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div></div>
     )
 }
 
