@@ -12,8 +12,13 @@ const Login = () => {
   const [msgErr, setMsgErr] = useState("");
 
   useEffect(() => {
-    localStorage.removeItem("token");
-    localStorage.setItem("NavId", 1);
+    const token = localStorage.getItem('token')
+    if (token == null) {
+    } else {
+      localStorage.removeItem("token");
+      localStorage.setItem("NavId", 1);
+    }
+
   }, []);
 
   const login = async () => {
@@ -86,8 +91,8 @@ const Login = () => {
               </h2>
               <form>
                 <div className="intro-x mt-2 text-slate-400 xl:hidden text-center">
-                 
-        
+
+
                 </div>
                 <div className="intro-x mt-8">
                   <input
@@ -106,7 +111,7 @@ const Login = () => {
                       setAccount({ ...account, password: e.target.value });
                     }}
                   />
-                   <p style={{ color: "red", fontSize: 16 }}>{msgErr}</p>
+                  <p style={{ color: "red", fontSize: 16 }}>{msgErr}</p>
                 </div>
 
                 <div className="intro-x mt-5 xl:mt-8 text-center xl:text-left">

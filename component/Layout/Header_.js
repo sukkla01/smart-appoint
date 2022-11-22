@@ -16,8 +16,12 @@ const Header_ = () => {
 
   const getProfile = () => {
     const token = localStorage.getItem("token");
-    const decoded = jwt_decode(token);
-    setProfile(decoded);
+    if (token == null) {
+    } else {
+      const decoded = jwt_decode(token);
+      setProfile(decoded);
+    }
+
     // console.log(decoded);
   };
 
