@@ -360,6 +360,31 @@ const Appoint = () => {
 
     console.log(data)
   }
+  const onModalHistory = async (data) => {
+    setActiveModal(2)
+    const token = localStorage.getItem("token");
+
+    try {
+      let res = await axios.get(`${BASE_URL}/get-oapp-id/${data}`, {
+        headers: { token: token },
+      });
+      console.log(res.data[0]);
+      setFilterData({
+        vstdate: moment(res.data[0].nextdate).format('YYYY-MM-DD'),
+        start_time: res.data[0].nexttime,
+        end_time: res.data[0].endtime,
+        clinic: res.data[0].clinic,
+        doctor: res.data[0].doctor,
+        reason: res.data[0].app_cause,
+        next_pttype: res.data[0].next_pttype,
+        kskdepart: res.data[0].depcode,
+        lab: [],
+        xray: [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="col-12 mt-6">
@@ -658,8 +683,8 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example--tab"
               >
-                <button className="btn btn-success" onClick={() => setActiveModal(2)}>ddd</button>
-                <HistoryVn />
+                {/* <button className="btn btn-success" onClick={() => setActiveModal(2)}>ddd</button> */}
+                <HistoryVn onChange={onModalHistory} />
               </div>
               <div
                 id="example-tab-5"
@@ -963,7 +988,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab  onChange={onModalLab} />
+                <Lab onChange={onModalLab} />
               </div>
               <div
                 id="example-tab-7"

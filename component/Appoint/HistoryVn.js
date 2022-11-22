@@ -18,7 +18,7 @@ const HistoryVn = (props) => {
 
     useEffect(() => {
         getHistory()
-    }, [props]);
+    }, []);
 
     const getHistory = async () => {
         const token = localStorage.getItem("token");
@@ -36,6 +36,10 @@ const HistoryVn = (props) => {
         }
     };
 
+    const onSelect =(oapp_id)=>{
+        props.onChange(oapp_id);
+    }
+
     return (
         <div><div className="intro-y overflow-auto lg:overflow-visible mt-2 sm:mt-0">
             <table className="table table-report sm:mt-0">
@@ -45,6 +49,7 @@ const HistoryVn = (props) => {
 
                             <tr className="intro-x cursor-pointer" key={i}
                                 style={{ marginTop: -10 }}
+                                onClick={()=>onSelect(item.oapp_id)}
                             >
                                 <td className="w-20">
                                     <div className="flex">
@@ -73,20 +78,14 @@ const HistoryVn = (props) => {
                                         <span className="mr-2"> วันที่มา</span>
                                     </div>
                                 </td>
-                                <td className="text-left w-24">
+                                <td className="text-left ">
                                     <span className="text-sm">  {item.dname} </span>
 
                                     <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                                         <span className="mr-2"> แพทย์</span>
                                     </div>
                                 </td>
-                                <td className="table-report__action w-32">
-                                    <span className="text-sm"> {item.dname} </span>
-
-                                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                        <span className="mr-2"> แพทย์</span>
-                                    </div>
-                                </td>
+                                
                             </tr>
 
                         );
