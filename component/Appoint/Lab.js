@@ -11,7 +11,7 @@ import config from "../../config";
 
 const BASE_URL = config.BASE_URL;
 
-const Lab = () => {
+const Lab = (props) => {
   const [dataLabForm, setDataLabForm] = useState([]);
   const [dataLabItem, setDataLabItem] = useState([]);
   const [dataLabSelect, setDataLabSelect] = useState([]);
@@ -24,7 +24,7 @@ const Lab = () => {
   useEffect(() => {
     console.log('dddd')
     getLabForm()
-  }, []);
+  }, [props]);
 
   const getLabForm = async () => {
     const token = localStorage.getItem("token");
@@ -60,7 +60,6 @@ const Lab = () => {
         res.data.map((item, i) => {
           // console.log({...item, status : false})
           tmp.push({ ...item, status: false })
-          console.log(tmp)
         })
 
       }
@@ -119,19 +118,21 @@ const Lab = () => {
     setDataLabMainSelect(null)
     setDataLabSelect([])
     setDataLabItem([])
+
+    props.onChange(false, tmp);
   }
 
 
   const deleteGroup = (group_name) => {
     let labgroup_delete = dataLabGroupAll.filter(e => e.group_name != group_name);
     setDataLabGroupAll(labgroup_delete)
+    props.onChange(false, labgroup_delete);
 
   }
   return (
     <div className="col-span-12 lg:col-span-8">
       <div className="box intro-y mt-5">
         <div className="box">
-          {console.log(dataLabGroupAll)}
           <div className="intro-y box p-5 mt-5 sm:mt-2">
             <div className="col-span-12 lg:col-span-12 ">
               <div className="intro-y flex items-center h-2 mt-3 mb-3">

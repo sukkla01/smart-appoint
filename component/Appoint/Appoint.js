@@ -355,6 +355,10 @@ const Appoint = () => {
 
     console.log(data)
   }
+  const onModalLab = (isModal, data) => {
+
+    console.log(data)
+  }
 
   return (
     <div className="col-12 mt-6">
@@ -957,7 +961,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab />
+                <Lab  onChange={onModalLab} />
               </div>
               <div
                 id="example-tab-7"
