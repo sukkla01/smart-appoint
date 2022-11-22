@@ -162,11 +162,11 @@ const Lab = () => {
                           // dataLabSelect.map((ite,i)=>{
                           //   iTmp  = iTmp.lab_code ==  item.lab_items_code
                           // })
-                          let ls = dataLabSelect.find(e => e.lab_code == item.lab_items_code)
+                          let ls = 1132 == item.lab_items_code
 
                           console.log(ls)
 
-                          console.log(dataLabSelect.length != 'undefined' ? ls.lab_code == item.lab_items_code : false)
+                          // console.log(dataLabSelect.length != 'undefined' ? ls.lab_code == item.lab_items_code : false)
 
                           // console.log(dataLabSelect.find(c => c.lab_code == item.lab_items_code));
                           return (
