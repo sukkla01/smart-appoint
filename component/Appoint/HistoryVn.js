@@ -1,0 +1,44 @@
+import React, { useEffect, useState } from "react";
+import * as moment from "moment";
+import "moment/locale/th";
+moment.locale("th");
+import th_TH from "antd/lib/locale/th_TH";
+import axios from "axios";
+import { Select, Popconfirm, notification } from "antd";
+import { Plus, FlaskConical, ArrowRight, Trash } from "lucide-react";
+import jwt_decode from "jwt-decode";
+
+import config from "../../config";
+
+const BASE_URL = config.BASE_URL;
+
+
+const HistoryVn = (props) => {
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        getHistory()
+    }, [props]);
+
+    const getHistory = async () => {
+        const token = localStorage.getItem("token");
+        const decoded = jwt_decode(token);
+
+
+        try {
+            let res = await axios.get(`${BASE_URL}/get-history-appoint-all/${decoded.deptname}`, {
+                headers: { token: token },
+            });
+            console.log(res.data)
+            setData(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    return (
+        <div>History</div>
+    )
+}
+
+export default HistoryVn

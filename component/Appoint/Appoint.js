@@ -23,6 +23,7 @@ import axios from "axios";
 import config from "../../config";
 const md5 = require("md5");
 import jwt_decode from "jwt-decode";
+import HistoryVn from "./HistoryVn";
 
 const BASE_URL = config.BASE_URL;
 
@@ -658,6 +659,7 @@ const Appoint = () => {
                 aria-labelledby="example--tab"
               >
                 <button className="btn btn-success" onClick={() => setActiveModal(2)}>ddd</button>
+                <HistoryVn />
               </div>
               <div
                 id="example-tab-5"
