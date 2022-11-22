@@ -345,6 +345,7 @@ const Appoint = () => {
       });
       setOpen(false)
       openNotificationWithIconSuccess('success')
+      getHistoryAppoint()
       resetValueOapp()
     } catch (error) {
       console.log(error);
@@ -484,7 +485,7 @@ const Appoint = () => {
                     onClick={() => {
                       getPatientId(item.cid)
                       setOpen(true)
-                      setFormData({...formData,cid : item.cid})
+                      setFormData({ ...formData, cid: item.cid })
                     }}
                   >
                     <td className="w-20">
