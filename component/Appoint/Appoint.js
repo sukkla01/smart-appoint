@@ -65,6 +65,14 @@ const Appoint = () => {
       style: { backroundColor: "#164E63" },
     });
   };
+  const openNotificationWithIconForm = (type) => {
+    notification[type]({
+      message: "แจ้งเตือน",
+      description: "กรุณาระบุวันที่นัด  คลินิก แพทย์",
+      duration: 5,
+      style: { backroundColor: "#164E63" },
+    });
+  };
   const openNotificationWithIconSuccess = (type) => {
     notification[type]({
       message: "แจ้งเตือน",
@@ -338,17 +346,25 @@ const Appoint = () => {
       user_send: formData.user_send
     }
 
-    try {
-      let res = await axios.post(`${BASE_URL}/add-appoint`, data, {
-        headers: { token: token },
-      });
-      setOpen(false)
-      openNotificationWithIconSuccess('success')
-      getHistoryAppoint()
-      resetValueOapp()
-    } catch (error) {
-      console.log(error);
+    console.log(formData)
+
+    if (filterData.vstdate == null || filterData.clinic == null || filterData.doctor == null) {
+      openNotificationWithIconForm('error')
+    } else {
+      try {
+        let res = await axios.post(`${BASE_URL}/add-appoint`, data, {
+          headers: { token: token },
+        });
+        setOpen(false)
+        openNotificationWithIconSuccess('success')
+        getHistoryAppoint()
+        resetValueOapp()
+      } catch (error) {
+        console.log(error);
+      }
     }
+
+
   };
 
 
@@ -551,7 +567,7 @@ const Appoint = () => {
         bodyStyle={{ backgroundColor: "#F8FAFC" }}
         closable={false}
         maskClosable={false}
-        // visible={true}
+      // visible={true}
       >
         <div className="modal-body " style={{ marginTop: -30 }}>
           <div className="intro-y  px-5 pt-0 ">
@@ -930,7 +946,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab onChange={onModalLab}  isCloeModal={open}/>
+                <Lab onChange={onModalLab} isCloeModal={open} />
               </div>
               <div
                 id="example-tab-7"
