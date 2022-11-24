@@ -27,11 +27,23 @@ const Xray = (props) => {
 
 
   useEffect(() => {
+  
     getXrayItem()
     getRoom()
     getPosture()
     getSide()
   }, [props]);
+
+
+  const  onReset=()=>{
+    setFormData({
+      xrayItem: null,
+      room: null,
+      posture: null,
+      side: null,
+    })
+    setData([])
+  }
 
   const getXrayItem = async () => {
     const token = localStorage.getItem("token");

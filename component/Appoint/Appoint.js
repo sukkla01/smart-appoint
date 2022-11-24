@@ -320,7 +320,8 @@ const Appoint = () => {
     });
   };
 
-  const onCancelModal = () => {
+  const onCancelModal = (value) => {
+    console.log(value)
     setOpen(false);
     resetValueOapp();
   };
@@ -334,9 +335,7 @@ const Appoint = () => {
     let data = {
       general: filterData,
       hn: dataPatient[0].hn,
-      user_send: formData.user_send,
-      lab: [],
-      xray: []
+      user_send: formData.user_send
     }
 
     try {
@@ -356,10 +355,12 @@ const Appoint = () => {
   const onModalXray = (isModal, data) => {
 
     console.log(data)
+    setFilterData({ ...filterData, xray: data })
   }
   const onModalLab = (isModal, data) => {
 
-    console.log(data)
+    setFilterData({ ...filterData, lab: data })
+
   }
   const onModalHistory = async (data) => {
     setActiveModal(2)
@@ -548,6 +549,9 @@ const Appoint = () => {
         okText="บันทึก"
         cancelText="ยกเลิก"
         bodyStyle={{ backgroundColor: "#F8FAFC" }}
+        closable={false}
+        maskClosable={false}
+        // visible={true}
       >
         <div className="modal-body " style={{ marginTop: -30 }}>
           <div className="intro-y  px-5 pt-0 ">
@@ -696,7 +700,7 @@ const Appoint = () => {
                 aria-labelledby="example-5-tab"
               >
                 <div className=" grid grid-cols-12 gap-3">
-                  {/* //--------------------------------------------------------- เลือกวันที่  -------------------------------------------------------------------// */}
+                  {/* //--------------------------------------------------------- เลือกรายการนัด  -------------------------------------------------------------------// */}
                   <div className="col-span-12 lg:col-span-8">
                     <div className="box intro-y mt-3">
                       <div className="box">
@@ -707,7 +711,7 @@ const Appoint = () => {
                               <DatePicker
                                 onChange={onChangeDateAppoint}
                                 placeholder="------เลือกวันที่นัด------"
-                                style={{ width: 245 }}
+                                style={{ width: 249 }}
                                 value={
                                   filterData.vstdate == null
                                     ? null
@@ -888,7 +892,7 @@ const Appoint = () => {
                       </div>
                     </div>
                   </div>
-                  {/* //------------------------------------------------------------- เลือกวันที่  ------------------------------------------------------------------// */}
+                  {/* //------------------------------------------------------------- เลือกรายการนัด  ------------------------------------------------------------------// */}
 
                   {/* //------------------------------------------------------------- จำนวนการนัด  ------------------------------------------------------------------// */}
                   <div className="col-span-12 lg:col-span-4">
@@ -918,71 +922,7 @@ const Appoint = () => {
                   </div>
                   {/* //------------------------------------------------------------- END จำนวนการนัด  ------------------------------------------------------------------// */}
                 </div>
-                <div className="grid grid-cols-12 gap-3">
-                  {/* //--------------------------------------------------------- เหตุผลนัด  -------------------------------------------------------------------// */}
-                  {/* <div className="col-span-12 lg:col-span-4">
-                    <div className="box intro-y mt-3">
-                      <div className="box">
-                        <div className="intro-y box pl-5 pt-5 pb-5 mt-5 sm:mt-2">
-                          <div className="col-span-8 lg:col-span-8 mt-4"></div>
-                          <div className="col-span-8 lg:col-span-8 mt-4">
-                            <label style={{ marginRight: 5, marginLeft: 11 }}>
-                              รายการ x-ray
-                            </label>
-                            <Select
-                              style={{ width: 200, marginLeft: 5 }}
-                              showSearch
-                              placeholder="-----เลือกสิทธิครั้งหน้า-----"
-                              optionFilterProp="children"
-                              onChange={(e) => {
-                                setFilterData({ ...filterData, doctor: e });
-                              }}
-                              // onSearch={onSearchDoctor}
-                              filterOption={(input, option) =>
-                                (option?.label ?? "")
-                                  .toLowerCase()
-                                  .includes(input.toLowerCase())
-                              }
-                              options={dataDoctor}
-                              value={
-                                (filterData.doctor = null
-                                  ? null
-                                  : filterData.doctor)
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-                  {/* //------------------------------------------------------------- END เลือกวันที่  ------------------------------------------------------------------// */}
 
-                  {/* //------------------------------------------------------------- START ระบุเพศ  ------------------------------------------------------------------// */}
-                  {/* <div className="col-span-12 lg:col-span-8">
-                    <div className="box intro-y mt-3">
-                      <div className="col-span-12 lg:col-span-12 px-4 py-4">
-                        <div style={{ fontSize: 16 }}>LAB (พิมพ์ลงใบนัด)</div>
-                        <div className="form-check mt-5">
-                          <>
-                          
-                            <div className="intro-y col-span-12 p items-center mt-0">
-                              {labAppoint.map((item, i) => {
-                                return (
-                                  <button className="btn btn-defaults btn-sm  mr-2  mt-2">
-                                    {item.name}
-                                  </button>
-                                );
-                              })}
-                            </div>
-
-                          
-                          </>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-                  {/* //------------------------------------------------------------- END ระบุเพศ  ------------------------------------------------------------------// */}
-                </div>
               </div>
               <div
                 id="example-tab-6"
@@ -990,7 +930,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab onChange={onModalLab} />
+                <Lab onChange={onModalLab}  isCloeModal={open}/>
               </div>
               <div
                 id="example-tab-7"

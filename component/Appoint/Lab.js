@@ -22,7 +22,7 @@ const Lab = (props) => {
 
 
   useEffect(() => {
-    console.log('dddd')
+    console.log(!props.isCloeModal)
     getLabForm()
   }, [props]);
 
@@ -95,6 +95,7 @@ const Lab = (props) => {
       tmp.push({ lab_form: labMainSelect, lab_code: code })
 
     }
+    console.log(tmp)
     setDataLabSelect(tmp)
 
 
@@ -128,7 +129,51 @@ const Lab = (props) => {
     setDataLabGroupAll(labgroup_delete)
     props.onChange(false, labgroup_delete);
 
+    setDataLabItem([])
+    setDataLabMainSelect(null)
+    setDataLabSelect([])
+
   }
+
+  const onClickLabGroup = async (lab_name) => {
+
+    const token = localStorage.getItem("token");
+
+    let tmp = []
+
+    dataLabGroupAll.map((item) => {
+      if (item.group_name == lab_name) {
+        tmp.push(item.item)
+      }
+    })
+    console.log(tmp)
+
+    try {
+      let res = await axios.get(`${BASE_URL}/get-labform-item/${lab_name}`, {
+        headers: { token: token },
+      });
+
+      setDataLabItem(res.data)
+
+    } catch (error) {
+      console.log(error);
+    }
+    setDataLabSelect(tmp[0])
+    setDataLabMainSelect(lab_name)
+
+
+  }
+
+
+  const onReset = () => {
+    setDataLabItem([])
+    setDataLabSelect([])
+    setDataLabMainSelect(null)
+    setDataLabGroupAll([])
+  }
+
+
+  const onBtnBlank = () => { }
   return (
     <div className="col-span-12 lg:col-span-8">
       <div className="box intro-y mt-5">
@@ -190,10 +235,11 @@ const Lab = (props) => {
                     {dataLabItem.map((item, i) => {
                       let tmp = dataLabSelect.find(c => c.lab_code == item.lab_items_code)
                       let tmp_arr = tmp == undefined ? '' : tmp.lab_code
+                      let classBtnCheck = tmp_arr > 0 ? 'btn-success' : 'btn-outline-success'
                       return (
                         <>
                           {item.component_type == 'label' ? <div style={{ fontSize: item.font_size > 0 ? item.font_size : 16, marginTop: 20 }}><b>{item.component_caption}</b> <br /><hr /></div> :
-                            <button className={tmp_arr > 0 ? "btn btn-success btn-sm  mr-2  mt-2 w-48" : "btn btn-outline-success btn-sm  mr-2  mt-2 w-48"}
+                            <button className={`btn ${classBtnCheck} btn-sm  mr-2  mt-2 w-48`}
                               onClick={() => onClickLab(item.lab_items_code, item.component_caption)}
                               key={i}
                             >
@@ -208,7 +254,7 @@ const Lab = (props) => {
 
                       <div className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
                         <button className={dataLabSelect.length > 0 ? "btn btn-primary" : "btn btn-secondary"}
-                          onClick={dataLabSelect.length > 0 ? AddGroup : ''}
+                          onClick={dataLabSelect.length > 0 ? AddGroup : onBtnBlank}
 
                         >เพิ่มรายการ  <ArrowRight className="top-menu__sub-icon ml-3" size={14} /></button>
                       </div>
@@ -227,12 +273,14 @@ const Lab = (props) => {
           <div className="box intro-y mt-3" >
             <div className="col-span-12 lg:col-span-12 px-4 py-4">
               <div>รายการที่สั่งไว้</div>
-              {dataLabGroupAll.map((item) => {
-                return <><div className="box px-4 py-4 mb-1 flex items-center zoom-in " style={{ backgroundColor: '#E6F4F3' }}>
-                  <div className=" flex-none image-fit ">
+              {dataLabGroupAll.map((item, i) => {
+                return <div className="box px-4 py-4 mb-1 flex items-center  " style={{ backgroundColor: '#E6F4F3' }}
+                  key={i}
+                >
+                  <div className=" flex-none image-fit  cursor-pointer" onClick={() => onClickLabGroup(item.group_name)}>
                     <FlaskConical color="#164E63" size={22} style={{ marginRight: 0 }} />
                   </div>
-                  <div className="ml-4 mr-auto">
+                  <div className="ml-4 mr-auto cursor-pointer" onClick={() => onClickLabGroup(item.group_name)}>
                     <div className="font-medium">{item.group_name}</div>
                   </div>
                   <div className="text-success"> <Popconfirm
@@ -241,7 +289,7 @@ const Lab = (props) => {
                     // onCancel={cancel}
                     okText="ตกลง"
                     cancelText="ออก"
-                  ><Trash color="red" size={22} style={{ marginRight: 0, color: 'red' }} />
+                  ><Trash className="cursor-pointer" color="red" size={22} style={{ marginRight: 0, color: 'red' }} />
                   </Popconfirm>
                   </div>
 
@@ -249,7 +297,6 @@ const Lab = (props) => {
 
 
 
-                </>
               })}
 
 
