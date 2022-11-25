@@ -22,15 +22,18 @@ const Lab = (props) => {
 
 
   useEffect(() => {
-    console.log(!props.isCloeModal)
+    // console.log(!props.isCloeModal)
     getLabForm()
+    console.log(props.data)
+    // setDataLabSelect(props.data)
+    // setDataLabGroupAll(props.data)
   }, [props]);
 
   const getLabForm = async () => {
     const token = localStorage.getItem("token");
     let tmp = [];
 
-    console.log('fff')
+    // console.log('fff')
     try {
       let res = await axios.get(`${BASE_URL}/get-labform`, {
         headers: { token: token },
@@ -249,7 +252,7 @@ const Lab = (props) => {
                         </>
                       );
                     })}
-
+{console.log(dataLabGroupAll)}
                     <div className="flex flex-col sm:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
 
                       <div className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">

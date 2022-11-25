@@ -33,6 +33,7 @@ const Appoint = () => {
   const [dataPatient, setDataPatient] = useState([]);
   const [dataHistory, setDataHistory] = useState([]);
   const [open, setOpen] = useState(false);
+  const [statusEA, setStatusEA] = useState('A');
   const [dataClinic, setDataClinic] = useState([]);
   const [dataDoctor, setDataDoctor] = useState([]);
   const [labAppoint, setLabAppoint] = useState([]);
@@ -45,6 +46,7 @@ const Appoint = () => {
   ]);
 
   const [filterData, setFilterData] = useState({
+    oapp_id: null,
     vstdate: null,
     start_time: null,
     end_time: null,
@@ -53,9 +55,12 @@ const Appoint = () => {
     reason: null,
     next_pttype: null,
     kskdepart: null,
-    lab: [],
-    xray: [],
+    // lab: [],
+    // xray: [],
   });
+
+  const [datalab, setDataLab] = useState([]);
+  const [dataXray, setDataXray] = useState([]);
 
   const openNotificationWithIcon = (type) => {
     notification[type]({
@@ -343,7 +348,9 @@ const Appoint = () => {
     let data = {
       general: filterData,
       hn: dataPatient[0].hn,
-      user_send: formData.user_send
+      user_send: formData.user_send,
+      lab: datalab,
+      xray: dataXray
     }
 
     console.log(formData)
@@ -371,23 +378,29 @@ const Appoint = () => {
   const onModalXray = (isModal, data) => {
 
     console.log(data)
-    setFilterData({ ...filterData, xray: data })
+    setDataXray(data)
   }
   const onModalLab = (isModal, data) => {
 
-    setFilterData({ ...filterData, lab: data })
+    setDataLab(data)
+
+  }
+  const onStatusEA = (data) => {
+
+    setStatusEA(data)
 
   }
   const onModalHistory = async (data) => {
     setActiveModal(2)
     const token = localStorage.getItem("token");
 
+    //oapp
     try {
       let res = await axios.get(`${BASE_URL}/get-oapp-id/${data}`, {
         headers: { token: token },
       });
-      console.log(res.data[0]);
       setFilterData({
+        ...filterData,
         vstdate: moment(res.data[0].nextdate).format('YYYY-MM-DD'),
         start_time: res.data[0].nexttime,
         end_time: res.data[0].endtime,
@@ -396,9 +409,23 @@ const Appoint = () => {
         reason: res.data[0].app_cause,
         next_pttype: res.data[0].next_pttype,
         kskdepart: res.data[0].depcode,
-        lab: [],
-        xray: [],
       });
+    } catch (error) {
+      console.log(error);
+    }
+
+    //lab
+
+    try {
+      let res = await axios.get(`${BASE_URL}/get-lab-edit-id/${data}`, {
+        headers: { token: token },
+      });
+      console.log(res.data);
+      let tmp = []
+      res.data.map((item, i) => {
+
+      })
+      // setDataLab(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -555,7 +582,7 @@ const Appoint = () => {
 
       <Modal
         headStyle={{ backgroundColor: "red" }}
-        title={title}
+        title={title + ' ' + statusEA}
         // centered
         open={open}
         onOk={onSubmit}
@@ -636,7 +663,23 @@ const Appoint = () => {
                   role="tab"
                   aria-controls="example-tab-4"
                   aria-selected="true"
-                  onClick={() => setActiveModal(1)}
+                  onClick={() => {
+                    setActiveModal(1)
+                    setStatusEA('A')
+                    setFilterData({
+                      oapp_id: null,
+                      vstdate: null,
+                      start_time: null,
+                      end_time: null,
+                      clinic: null,
+                      doctor: null,
+                      reason: null,
+                      next_pttype: null,
+                      kskdepart: null,
+                      // lab: [],
+                      // xray: [],
+                    })
+                  }}
                 >
                   ประวัติการนัด
                 </button>
@@ -706,7 +749,7 @@ const Appoint = () => {
                 aria-labelledby="example--tab"
               >
                 {/* <button className="btn btn-success" onClick={() => setActiveModal(2)}>ddd</button> */}
-                <HistoryVn onChange={onModalHistory} cid={formData.cid} />
+                <HistoryVn onChange={onModalHistory} cid={formData.cid} status={onStatusEA} />
               </div>
               <div
                 id="example-tab-5"
@@ -946,7 +989,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab onChange={onModalLab} isCloeModal={open} />
+                <Lab onChange={onModalLab} isCloeModal={open} data={filterData.lab} />
               </div>
               <div
                 id="example-tab-7"

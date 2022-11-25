@@ -38,6 +38,7 @@ const HistoryVn = (props) => {
 
     const onSelect =(oapp_id)=>{
         props.onChange(oapp_id);
+        props.status('E');
     }
 
     return (
