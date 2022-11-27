@@ -4,9 +4,9 @@ import "moment/locale/th";
 moment.locale("th");
 import th_TH from "antd/lib/locale/th_TH";
 import axios from "axios";
-import { Select, Popconfirm } from "antd";
+import { Select, Popconfirm, notification } from "antd";
 import { Plus, Trash } from "lucide-react";
-
+import jwt_decode from "jwt-decode";
 import config from "../../config";
 
 const BASE_URL = config.BASE_URL;
@@ -25,17 +25,31 @@ const Xray = (props) => {
     side: null,
   });
 
+  const [dataXray, setDataXray] = useState([]);
+  const [userStaff, setUserStaff] = useState('');
+
+  const getUser = () => {
+    const token = localStorage.getItem("token");
+    const decoded = jwt_decode(token);
+    setUserStaff(decoded.deptname)
+  }
 
   useEffect(() => {
-  
+    getUser()
     getXrayItem()
     getRoom()
     getPosture()
     getSide()
+
+    if (props.status == 'E') {
+      getXrayId()
+    } else {
+      setDataXray([])
+    }
   }, [props]);
 
 
-  const  onReset=()=>{
+  const onReset = () => {
     setFormData({
       xrayItem: null,
       room: null,
@@ -118,7 +132,22 @@ const Xray = (props) => {
     }
   };
 
-  const onSubmit = () => {
+
+  const getXrayId = async () => {
+    const token = localStorage.getItem("token");
+    console.log(props.oapp_id)
+    try {
+      let res = await axios.get(`${BASE_URL}/get-xray-id/${props.oapp_id}`, {
+        headers: { token: token },
+      });
+      console.log(res.data)
+      setDataXray(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmit = async () => {
     let tmp = []
     // formData.map((item,i)=>{
     //    tmp.push({'xrayItem' : item.xrayItem.split(',')[1]})
@@ -126,45 +155,106 @@ const Xray = (props) => {
     // })
     // setData(tmp)
     let no = 1
-    data.map((item, i) => {
-      no = no + i
-      tmp.push({
-        'id': no, 'xrayItem': item.xrayItem, 'room': item.room, 'posture': item.posture, 'side': item.side,
-        'xrayItem_id': item.xrayItem_id, 'room_id': item.room_id, 'posture_id': item.posture_id, 'side_id': item.side_id
-      })
-    })
-    tmp.push({
-      'id': data.length > 0 ? no + 1 : 1, 
-      'xrayItem': formData.xrayItem == null ? null : formData.xrayItem.split(',')[1], 
-      'room': formData.room == null ? null : formData.room.split(',')[1], 
-      'posture': formData.posture == null ? null : formData.posture.split(',')[1], 
-      'side': formData.side == null ? null : formData.side.split(',')[1],
-      'xrayItem_id': formData.xrayItem == null ? null : formData.xrayItem.split(',')[0], 
-      'room_id': formData.room == null ? null : formData.room.split(',')[0], 
-      'posture_id': formData.posture == null ? null : formData.posture.split(',')[0], 
-      'side_id': formData.side == null ? null : formData.side.split(',')[0]
-    })
+    // data.map((item, i) => {
+    //   no = no + i
+    //   tmp.push({
+    //     'id': no, 'xrayItem': item.xrayItem, 'room': item.room, 'posture': item.posture, 'side': item.side,
+    //     'xrayItem_id': item.xrayItem_id, 'room_id': item.room_id, 'posture_id': item.posture_id, 'side_id': item.side_id
+    //   })
+    // })
+    // tmp.push({
+    //   'id': data.length > 0 ? no + 1 : 1, 
+    //   'xrayItem': formData.xrayItem == null ? null : formData.xrayItem.split(',')[1], 
+    //   'room': formData.room == null ? null : formData.room.split(',')[1], 
+    //   'posture': formData.posture == null ? null : formData.posture.split(',')[1], 
+    //   'side': formData.side == null ? null : formData.side.split(',')[1],
+    //   'xrayItem_id': formData.xrayItem == null ? null : formData.xrayItem.split(',')[0], 
+    //   'room_id': formData.room == null ? null : formData.room.split(',')[0], 
+    //   'posture_id': formData.posture == null ? null : formData.posture.split(',')[0], 
+    //   'side_id': formData.side == null ? null : formData.side.split(',')[0]
+    // })
+
+
+    if (props.data.vstdate == null) {
+      notification['error']({
+        message: "แจ้งเตือน",
+        description: "กรุณาเลือกวันนัดก่อน",
+        duration: 5,
+        style: { backroundColor: "#164E63" },
+      });
+    } else {
+      let data = {
+        // 'id': data.length > 0 ? no + 1 : 1, 
+        'xrayItem': formData.xrayItem == null ? null : formData.xrayItem.split(',')[1],
+        'room': formData.room == null ? null : formData.room.split(',')[1],
+        'posture': formData.posture == null ? null : formData.posture.split(',')[1],
+        'side': formData.side == null ? null : formData.side.split(',')[1],
+        'xrayItem_id': formData.xrayItem == null ? null : formData.xrayItem.split(',')[0],
+        'room_id': formData.room == null ? null : formData.room.split(',')[0],
+        'posture_id': formData.posture == null ? null : formData.posture.split(',')[0],
+        'side_id': formData.side == null ? null : formData.side.split(',')[0],
+        'oapp_id': props.oapp_id,
+        'dataOapp': props.data,
+        'hn': props.hn,
+        'user_send': userStaff
+
+      }
+      console.log(data)
+      const token = localStorage.getItem("token");
+      try {
+        let res = await axios.post(`${BASE_URL}/add-xray`, data, {
+          headers: { token: token },
+        });
+        console.log(res.data)
+
+        getXrayId()
+        reset()
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
     // tmp.push({
     //     'xrayItem': 1, 'room': 1, 'posture': 1, 'side':1,
     //     'xrayItem_id': 1, 'room_id': 1, 'posture_id': 1, 'side_id': 1
     //   })
-    setData(tmp)
+    // setData(tmp)
     props.onChange(false, tmp);
+
+
 
   }
 
-  const del = (id) => {
-    let tmp = data.filter(function (item) {
-      return item.id !== id
-    })
+  const del = async (id) => {
+    // let tmp = data.filter(function (item) {
+    //   return item.id !== id
+    // })
 
-    console.log(tmp)
-    setData(tmp)
-    props.onChange(false, tmp);
-   
+    // console.log(tmp)
+    // setData(tmp)
+    const token = localStorage.getItem("token");
+    let data = {
+      oapp_xray_id: id
+    }
+    try {
+      let res = await axios.post(`${BASE_URL}/delete-xray`, data, {
+        headers: { token: token },
+      });
+      console.log(res.data)
+
+      getXrayId()
+      // reset()
+    } catch (error) {
+      console.log(error);
+    }
+    // getXrayId()
+
+    // props.onChange(false, tmp);
+
   }
   const reset = () => {
-    setData({
+    setFormData({
       ...formData,
       xrayItem: null,
       room: null,
@@ -183,7 +273,7 @@ const Xray = (props) => {
                 {/* <div className="mr-3 text-xl"> เลือกรายการ x-ray</div> */}
 
                 <div className="col-span-12 lg:col-span-12 mt-1">
-                  เลือกรายการ
+                  เลือกรายการ   {props.oapp_id}
                   <Select
                     style={{ width: 280, marginLeft: 5, paddingTop: -50 }}
                     // size='large'
@@ -329,19 +419,19 @@ const Xray = (props) => {
                     </thead>
                     <tbody>
 
-                      {data.map((item, i) => {
+                      {dataXray.map((item, i) => {
                         return (
                           <tr key={i}>
                             <td>{i + 1}</td>
-                            <td>{item.xrayItem}</td>
-                            <td>{item.room}</td>
-                            <td>{item.posture}</td>
-                            <td>{item.side}</td>
+                            <td>{item.xray_items_name}</td>
+                            <td>{item.roomname}</td>
+                            <td>{item.typename}</td>
+                            <td>{item.sidename}</td>
                             <td>
                               <div>
                                 <Popconfirm
                                   title="คุณต้องการลบหรือไม่"
-                                  onConfirm={() => del(item.id)}
+                                  onConfirm={() => del(item.oapp_xray_id)}
                                   // onCancel={cancel}
                                   okText="ตกลง"
                                   cancelText="ออก"

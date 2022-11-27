@@ -34,6 +34,8 @@ const Appoint = () => {
   const [dataHistory, setDataHistory] = useState([]);
   const [open, setOpen] = useState(false);
   const [statusEA, setStatusEA] = useState('A');
+  const [OappId, setOappId] = useState('');
+  const [hn, setHN] = useState('');
   const [dataClinic, setDataClinic] = useState([]);
   const [dataDoctor, setDataDoctor] = useState([]);
   const [labAppoint, setLabAppoint] = useState([]);
@@ -46,7 +48,6 @@ const Appoint = () => {
   ]);
 
   const [filterData, setFilterData] = useState({
-    oapp_id: null,
     vstdate: null,
     start_time: null,
     end_time: null,
@@ -101,6 +102,7 @@ const Appoint = () => {
   );
 
   useEffect(() => {
+    getOappIdSerial()
     getHistoryAppoint()
     getClinic();
     getPttype();
@@ -129,6 +131,23 @@ const Appoint = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const getOappIdSerial = async (cid) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      let res = await axios.get(`${BASE_URL}/get-oapp-id-serial`, {
+        headers: { token: token },
+      });
+      setOappId(res.data.oappid)
+      // setDataPatient(res.data);
+      // setOpen(true);
+      console.log(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+
+
   };
   const getHistoryAppoint = async () => {
     const token = localStorage.getItem("token");
@@ -366,6 +385,7 @@ const Appoint = () => {
         openNotificationWithIconSuccess('success')
         getHistoryAppoint()
         resetValueOapp()
+        getOappIdSerial()
       } catch (error) {
         console.log(error);
       }
@@ -410,25 +430,26 @@ const Appoint = () => {
         next_pttype: res.data[0].next_pttype,
         kskdepart: res.data[0].depcode,
       });
+      setOappId(res.data[0].oapp_id)
     } catch (error) {
       console.log(error);
     }
 
     //lab
 
-    try {
-      let res = await axios.get(`${BASE_URL}/get-lab-edit-id/${data}`, {
-        headers: { token: token },
-      });
-      console.log(res.data);
-      let tmp = []
-      res.data.map((item, i) => {
+    // try {
+    //   let res = await axios.get(`${BASE_URL}/get-lab-edit-id/${data}`, {
+    //     headers: { token: token },
+    //   });
+    //   console.log(res.data);
+    //   let tmp = []
+    //   res.data.map((item, i) => {
 
-      })
-      // setDataLab(res.data);
-    } catch (error) {
-      console.log(error);
-    }
+    //   })
+    //   // setDataLab(res.data);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   return (
@@ -447,7 +468,7 @@ const Appoint = () => {
       <div className="intro-y    h-10">
         <div className="flex  ">
           <CalendarCheck2 className="top-menu__sub-icon " size={32} />
-          <span className="text-3xl  truncate ml-4">รายการนัด</span>
+          <span className="text-3xl  truncate ml-4">รายการนัด  {OappId}</span>
         </div>
         <br />
         {/* input */}
@@ -989,7 +1010,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab onChange={onModalLab} isCloeModal={open} data={filterData.lab} />
+                <Lab onChange={onModalLab} isCloeModal={open} data={filterData} status={statusEA} hn={dataPatient.length > 0 ? dataPatient[0].hn : ''} oapp_id={OappId} />
               </div>
               <div
                 id="example-tab-7"
@@ -998,7 +1019,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-7-tab"
               >
-                <Xray onChange={onModalXray} />
+                <Xray onChange={onModalXray} data={filterData} status={statusEA} hn={dataPatient.length > 0 ? dataPatient[0].hn : ''} oapp_id={OappId} />
               </div>
             </div>
           </div>
