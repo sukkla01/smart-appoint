@@ -282,9 +282,7 @@ const Header_ = () => {
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />
                 </li>
-                <li onClick={onClick}>
-                  <Link href={"/ipd"}>Profile</Link>
-                </li>
+              
 
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />

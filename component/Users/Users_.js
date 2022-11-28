@@ -19,6 +19,7 @@ const Users_ = () => {
     status: true,
     tel: "",
     dept: null,
+    role: null
   });
 
   useEffect(() => {
@@ -50,13 +51,13 @@ const Users_ = () => {
     }
   };
 
-  const onChangeStatus = async (e,username) => {
-    console.log(e,username);
+  const onChangeStatus = async (e, username) => {
+    console.log(e, username);
     const token = localStorage.getItem("token");
 
     let data = {
-      status : e,
-      usr_username : username
+      status: e,
+      usr_username: username
     }
 
     try {
@@ -64,7 +65,7 @@ const Users_ = () => {
         headers: { token: token },
       });
       getUsersAll();
-    
+
     } catch (error) {
       console.log(error);
     }
@@ -72,6 +73,10 @@ const Users_ = () => {
   const onSelectDept = (value) => {
     console.log(value);
     setFormData({ ...formData, dept: value });
+  };
+  const onSelectRole = (value) => {
+    console.log(value);
+    setFormData({ ...formData, role: value });
   };
 
   const onSubmit = async () => {
@@ -110,6 +115,7 @@ const Users_ = () => {
         status: res.data[0].usr_status == 1 ? true : false,
         // tel: "",
         dept: res.data[0].usr_dept,
+        role: res.data[0].role,
       });
     } catch (error) {
       console.log(error);
@@ -143,6 +149,7 @@ const Users_ = () => {
       status: true,
       // tel: "",
       dept: null,
+      role: null,
     });
   };
 
@@ -151,7 +158,7 @@ const Users_ = () => {
     setOpen(false);
   };
 
-  const openModal =()=>{
+  const openModal = () => {
     setclickStatus('add')
     setOpen(true)
   }
@@ -208,6 +215,7 @@ const Users_ = () => {
                     <th className="whitespace-nowrap">เลขบัตรประชาชน</th>
                     <th className="whitespace-nowrap">หน่วยงาน</th>
                     {/* <th className="whitespace-nowrap">จำนวนการนัด</th> */}
+                    <th className="whitespace-nowrap">สิทธิ</th>
                     <th className="whitespace-nowrap">สถานะ</th>
                     <th className="whitespace-nowrap">#</th>
                   </tr>
@@ -222,14 +230,15 @@ const Users_ = () => {
                         <td>{item.usr_password}</td>
                         <td>{item.usr_cid}</td>
                         <td>{item.nameDept}</td>
+                        <td>{item.role}</td>
                         <td>
                           {item.usr_status == 1 ? (
                             <Switch
                               defaultChecked
-                              onChange={(e) => onChangeStatus(e,item.usr_username)}
+                              onChange={(e) => onChangeStatus(e, item.usr_username)}
                             />
                           ) : (
-                            <Switch onChange={(e) => onChangeStatus(e,item.usr_username)} />
+                            <Switch onChange={(e) => onChangeStatus(e, item.usr_username)} />
                           )}
                         </td>
                         <td>
@@ -285,8 +294,8 @@ const Users_ = () => {
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 14 }}
                 layout="horizontal"
-                // initialValues={{ size: componentSize }}
-                // onValuesChange={onFormLayoutChange}
+              // initialValues={{ size: componentSize }}
+              // onValuesChange={onFormLayoutChange}
               >
                 <Form.Item label="ชื่อ-สกุล" rules={[{ required: true }]}>
                   <Input
@@ -308,7 +317,7 @@ const Users_ = () => {
                   {console.log(clickStatus)}
                   <Input
                     value={formData.username}
-                    disabled = {  clickStatus == 'add' ?  false :   true}
+                    disabled={clickStatus == 'add' ? false : true}
                     onChange={(e) => {
                       setFormData({ ...formData, username: e.target.value });
                     }}
@@ -341,6 +350,24 @@ const Users_ = () => {
                         </Select.Option>
                       );
                     })}
+                  </Select>
+                </Form.Item>
+                <Form.Item label="สิทธิ์">
+                  <Select
+                    value={formData.role}
+                    onChange={onSelectRole}
+                  // filterOption={(input, option) =>
+                  //   (option?.label ?? "")
+                  //     .toLowerCase()
+                  //     .includes(input.toLowerCase())
+                  // }
+                  >
+                    <Select.Option key={1} value={'admin'}>
+                      {'admin'}
+                    </Select.Option>
+                    <Select.Option key={2} value={'general'}>
+                      {'general'}
+                    </Select.Option>
                   </Select>
                 </Form.Item>
 

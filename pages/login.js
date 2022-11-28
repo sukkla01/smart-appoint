@@ -40,8 +40,8 @@ const Login = () => {
         if (res.status == 200) {
           const decoded = jwt_decode(res.data.token);
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("NavId", 1);
-          router.push("/");
+          localStorage.setItem("NavId", 2);
+          router.push("/oapp");
         }
       } catch (error) {
         console.log(error.message);

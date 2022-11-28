@@ -473,7 +473,7 @@ const Appoint = () => {
       <div className="intro-y    h-10">
         <div className="flex  ">
           <CalendarCheck2 className="top-menu__sub-icon " size={32} />
-          <span className="text-3xl  truncate ml-4">รายการนัด  {OappId}</span>
+          <span className="text-3xl  truncate ml-4">รายการนัด  </span>
         </div>
         <br />
         {/* input */}
