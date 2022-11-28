@@ -35,6 +35,7 @@ const Appoint = () => {
   const [open, setOpen] = useState(false);
   const [statusEA, setStatusEA] = useState('A');
   const [OappId, setOappId] = useState('');
+  const [OappIdTemp, setOappIdTemp] = useState('no');
   const [hn, setHN] = useState('');
   const [dataClinic, setDataClinic] = useState([]);
   const [dataDoctor, setDataDoctor] = useState([]);
@@ -356,6 +357,9 @@ const Appoint = () => {
     console.log(value)
     setOpen(false);
     resetValueOapp();
+
+
+     OappIdTemp == 'yes' ? getOappIdSerial() : ''
   };
 
 
@@ -413,7 +417,7 @@ const Appoint = () => {
   const onModalHistory = async (data) => {
     setActiveModal(2)
     const token = localStorage.getItem("token");
-
+    setOappId('yes')
     //oapp
     try {
       let res = await axios.get(`${BASE_URL}/get-oapp-id/${data}`, {
@@ -492,10 +496,13 @@ const Appoint = () => {
             className="btn btn-success  mr-2 mb-2 ml-2 col-span-2  w-40"
             // data-tw-toggle="modal"
             // data-tw-target="#header-footer-modal-preview"
-            onClick={() =>
+            onClick={() => {
               formData.cid == ""
                 ? openNotificationWithIcon("error")
                 : getPatientId(formData.cid)
+                setStatusEA('A')
+                setActiveModal(2)
+            }
             }
           >
             <Plus
@@ -551,6 +558,8 @@ const Appoint = () => {
                       getPatientId(item.cid)
                       setOpen(true)
                       setFormData({ ...formData, cid: item.cid })
+                      setStatusEA('A')
+                      setActiveModal(2)
                     }}
                   >
                     <td className="w-20">
@@ -1010,7 +1019,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-6-tab"
               >
-                <Lab onChange={onModalLab} isCloeModal={open} data={filterData} status={statusEA} hn={dataPatient.length > 0 ? dataPatient[0].hn : ''} oapp_id={OappId} />
+                <Lab onChange={onModalLab} isCloeModal={open} data={filterData} status={statusEA} hn={dataPatient.length > 0 ? dataPatient[0].hn : ''} oapp_id={OappId} isOpen={open} />
               </div>
               <div
                 id="example-tab-7"
@@ -1019,7 +1028,7 @@ const Appoint = () => {
                 role="tabpanel"
                 aria-labelledby="example-7-tab"
               >
-                <Xray onChange={onModalXray} data={filterData} status={statusEA} hn={dataPatient.length > 0 ? dataPatient[0].hn : ''} oapp_id={OappId} />
+                <Xray onChange={onModalXray} data={filterData} status={statusEA} hn={dataPatient.length > 0 ? dataPatient[0].hn : ''} oapp_id={OappId} isOpen={open} />
               </div>
             </div>
           </div>

@@ -47,6 +47,12 @@ const Lab = (props) => {
     }else{
       onReset()
     }
+
+    if(props.isOpen){
+      console.log('reset')
+      onReset()
+    }
+
   }, [props]);
 
   const getUser = () => {
