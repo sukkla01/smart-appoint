@@ -357,9 +357,10 @@ const Appoint = () => {
     console.log(value)
     setOpen(false);
     resetValueOapp();
+    getOappIdSerial()
 
-
-     OappIdTemp == 'yes' ? getOappIdSerial() : ''
+    //  OappIdTemp == 'no' ? getOappIdSerial() : ''
+    //  setOappIdTemp('no')
   };
 
 
