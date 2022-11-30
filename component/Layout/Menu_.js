@@ -120,6 +120,18 @@ const Menu_ = () => {
                   </div>
                 </a>
               </li>
+              <li onClick={() => onSelect(4, '/doctor2')}>
+                <a
+                  href="#"
+                  className="top-menu"
+                >
+                  <div className="top-menu__icon"> </div>
+                  <div className="top-menu__title">
+                    <Tag color="#164E63" size={16} style={{ marginRight: 10 }} />
+                    แพทย์
+                  </div>
+                </a>
+              </li>
               <li onClick={() => onSelect(4, '/clinic')}>
                 <a
                   href="#"

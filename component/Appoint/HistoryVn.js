@@ -4,17 +4,19 @@ import "moment/locale/th";
 moment.locale("th");
 import th_TH from "antd/lib/locale/th_TH";
 import axios from "axios";
-import { Select, Popconfirm, notification } from "antd";
-import { Plus, FlaskConical, ArrowRight, Trash } from "lucide-react";
+import { Select, Popconfirm, notification, Modal } from "antd";
+import { Plus, FlaskConical, ArrowRight, Trash, Printer } from "lucide-react";
 import jwt_decode from "jwt-decode";
 
 import config from "../../config";
+import PageAppoint from "./PageAppoint";
 
 const BASE_URL = config.BASE_URL;
 
 
 const HistoryVn = (props) => {
     const [data, setData] = useState([]);
+    const [isModal, setIsModal] = useState(false);
 
     useEffect(() => {
         getHistory()
@@ -36,9 +38,26 @@ const HistoryVn = (props) => {
         }
     };
 
-    const onSelect =(oapp_id)=>{
+    const onSelect = (oapp_id) => {
         props.onChange(oapp_id);
         props.status('E');
+    }
+
+    const deleteOapp = async (id) => {
+        const token = localStorage.getItem("token");
+
+        let data = {
+            'oapp_id': id
+        }
+
+        try {
+            let res = await axios.post(`${BASE_URL}/delete-appoint`, data, {
+                headers: { token: token },
+            });
+            getHistory()
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -46,13 +65,14 @@ const HistoryVn = (props) => {
             <table className="table table-report sm:mt-0">
                 <tbody style={{ marginTop: -50 }}>
                     {data.map((item, i) => {
+                        console.log(data)
                         return (
 
                             <tr className="intro-x cursor-pointer" key={i}
                                 style={{ marginTop: -10 }}
-                                onClick={()=>onSelect(item.oapp_id)}
+
                             >
-                                <td className="w-20">
+                                <td className="w-20" onClick={() => onSelect(item.oapp_id)}>
                                     <div className="flex">
                                         <div className="w-12 h-12 image-fit zoom-in">
                                             <img
@@ -63,7 +83,7 @@ const HistoryVn = (props) => {
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td onClick={() => onSelect(item.oapp_id)}>
                                     <span className="text-lg"> {item.department} </span>
 
                                     <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
@@ -72,7 +92,7 @@ const HistoryVn = (props) => {
                                     </div>
                                 </td>
 
-                                <td className="text-left w-24">
+                                <td className="text-left w-24" onClick={() => onSelect(item.oapp_id)}>
                                     <span className="text-sm"> {moment(item.vstdate).format('DD/MM/yyyy')} </span>
 
                                     <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
@@ -86,14 +106,61 @@ const HistoryVn = (props) => {
                                         <span className="mr-2"> แพทย์</span>
                                     </div>
                                 </td>
-                                
+                                <td className="text-left ">
+                                    <div>
+                                        <Popconfirm
+                                            title="คุณต้องการลบหรือไม่"
+                                            onConfirm={() => deleteOapp(item.oapp_id)} swdata
+                                            // onCancel={cancel}
+                                            okText="ตกลง"
+                                            cancelText="ออก"
+                                        >
+                                            <button className="btn btn-danger mr-1 mb-2">
+                                                <Trash
+                                                    className="top-menu__sub-icon "
+                                                    size={14}
+                                                />
+                                            </button>
+                                        </Popconfirm>
+                                        <button className="btn btn-success mr-1 mb-2" onClick={() => setIsModal(true)}>
+                                            <Printer
+                                                className="top-menu__sub-icon "
+                                                size={14}
+                                            />
+                                        </button>
+                                    </div>
+
+                                </td>
+
                             </tr>
 
                         );
                     })}
                 </tbody>
             </table>
-        </div></div>
+        </div>
+            <Modal
+                headStyle={{ backgroundColor: "red" }}
+                title={"ใบนัด"}
+                // centered
+                open={isModal}
+                // onOk={onSubmit}
+                onCancel={() => setIsModal(false)}
+                width="100%"
+                className="modalStyle2"
+                okText="พิมพ์"
+                cancelText="ยกเลิก"
+            >
+                <div className="modal-body " style={{ marginTop: -30 }}>
+                    <div className="intro-y  px-5 pt-0 ">
+                        <div className="cols-8  ">
+
+                            <PageAppoint />
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+        </div>
     )
 }
 

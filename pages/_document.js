@@ -20,14 +20,20 @@ class MyDocument extends Document {
                         <link href='https://fonts.googleapis.com/css?family=Kanit:400,300&subset=thai,latin' rel='stylesheet'
                             type='text/css' />
                         <link rel="stylesheet" href="dist/css/app.css" />
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css"></link>
 
 
-                    
+                        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@200&display=swap" rel="stylesheet"></link>
+
+
+
                     </div>
 
 
                 </Head>
-                <body className='py-5 md:py-0' style={{ fontFamily: 'Kanit' ,backgroundColor :  '#E5E7EB' }}>
+                <body className='py-5 md:py-0' style={{ fontFamily: 'Kanit', backgroundColor: '#E5E7EB' }}>
                     <Main />
                     <NextScript />
 
@@ -35,7 +41,7 @@ class MyDocument extends Document {
 
 
 
-                 
+
                     <script src="dist/js/app.js" defer ></script>
 
 

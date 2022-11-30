@@ -517,8 +517,8 @@ const Appoint = () => {
 
         {/* input */}
         <div className="intro-y flex items-center h-2 mt-5">
-          ประวัติการนัด จำนวน 10 รายการ
-          <div
+          ประวัติการนัด จำนวน {dataHistory.length} รายการ
+          {/* <div
             className="form-check form-switch w-full sm:w-auto sm:ml-auto mt-0 sm:mt-0"
             style={{ width: 150 }}
           >
@@ -545,7 +545,7 @@ const Appoint = () => {
             <label className="form-check-label ml-2 " htmlFor="show-example-1">
               เรียงวันที่รับ
             </label>
-          </div>
+          </div> */}
         </div>
 
         <div className="intro-y overflow-auto lg:overflow-visible mt-2 sm:mt-0">
@@ -582,13 +582,13 @@ const Appoint = () => {
                         <span className="ml-2">คลินิก :  {item.cname}</span>
                       </div>
                     </td>
-                    <td className="text-left w-24">
+                    {/* <td className="text-left w-24">
                       <span className="text-sm"> {moment(item.nextdate).format('DD/MM/yyyy')} </span>
 
                       <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                         <span className="mr-2"> วันที่นัด</span>
                       </div>
-                    </td>
+                    </td> */}
                     <td className="text-center w-20">
                       <span className="text-sm">  {item.tage} ปี </span>
 

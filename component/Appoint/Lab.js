@@ -303,7 +303,7 @@ const Lab = (props) => {
           <div className="intro-y box p-5 mt-5 sm:mt-2">
             <div className="col-span-12 lg:col-span-12 ">
               <div className="intro-y flex items-center h-2 mt-3 mb-3">
-                <div className="mr-3 text-xl"> ใบ LAB  {props.oapp_id}</div>
+                <div className="mr-3 text-xl"> ใบ LAB  </div>
                 <Select
                   style={{ width: 350, marginLeft: 5, paddingTop: -50 }}
                   // size='large'

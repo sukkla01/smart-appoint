@@ -4,20 +4,94 @@ import { Switch, Modal, Form, Input, Select, Popconfirm } from "antd";
 import axios from "axios";
 import config from "../../config";
 
+const BASE_URL = config.BASE_URL;
+
 const DoctorG = () => {
   const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    doctor: "",
+    tname: "",
+    status: true,
+  });
+  useEffect(() => {
+    getDoctorAll()
+  }, []);
 
   const getDoctorAll = async () => {
     const token = localStorage.getItem("token");
     try {
-      let res = await axios.get(`${BASE_URL}/get-user-all`, {
+      let res = await axios.get(`${BASE_URL}/get-doctor-total`, {
         headers: { token: token },
       });
       setData(res.data);
-      // console.log(res.data)
+      console.log(res.data)
     } catch (error) {
       console.log(error);
     }
+  };
+
+
+  const getDoctorId = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-doctor-id/${id}`, {
+        headers: { token: token },
+      });
+      setFormData({
+        doctor: res.data[0].doctor,
+        tname: res.data[0].tname,
+        status: res.data[0].status == 'Y' ? true : false,
+      })
+      setOpen(true)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onChangeStatus = async (e, doctor) => {
+    // console.log(e, username);
+    const token = localStorage.getItem("token");
+
+    let data = {
+      status: e,
+      doctor: doctor
+    }
+
+    try {
+      let res = await axios.post(`${BASE_URL}/update-status-doctor`, data, {
+        headers: { token: token },
+      });
+      getDoctorAll();
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmit = async () => {
+    // setOpen(false)
+    // console.log(formData);
+    const token = localStorage.getItem("token");
+    
+
+    try {
+      let res = await axios.post(`${BASE_URL}/add-doctor`, formData, {
+        headers: { token: token },
+      });
+      getDoctorAll();
+      // onReset();
+      setOpen(false)
+      // Alert()
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+  const onExit = () => {
+    // onReset();
+    setOpen(false);
   };
   return (
     <div className="col-12 mt-6">
@@ -46,7 +120,9 @@ const DoctorG = () => {
                     className="btn btn-success  mr-2 mb-2 ml-2 col-span-2  w-40"
                     // data-tw-toggle="modal"
                     // data-tw-target="#header-footer-modal-preview"
-                    onClick={() => openModal()}
+                    onClick={() => {
+                      setOpen(true)
+                    }}
                   >
                     <Plus
                       className="top-menu__sub-icon "
@@ -65,13 +141,8 @@ const DoctorG = () => {
                 >
                   <tr>
                     <th className="whitespace-nowrap">#</th>
+                    <th className="whitespace-nowrap">รหัสแพทย์</th>
                     <th className="whitespace-nowrap">ชื่อ-สกุล</th>
-                    <th className="whitespace-nowrap">username</th>
-                    <th className="whitespace-nowrap">password</th>
-                    <th className="whitespace-nowrap">เลขบัตรประชาชน</th>
-                    <th className="whitespace-nowrap">หน่วยงาน</th>
-                    {/* <th className="whitespace-nowrap">จำนวนการนัด</th> */}
-                    <th className="whitespace-nowrap">สิทธิ</th>
                     <th className="whitespace-nowrap">สถานะ</th>
                     <th className="whitespace-nowrap">#</th>
                   </tr>
@@ -81,27 +152,24 @@ const DoctorG = () => {
                     return (
                       <tr key={i}>
                         <td>{i + 1}</td>
-                        <td>{item.usr_fullname}</td>
-                        <td>{item.usr_username}</td>
-                        <td>{item.usr_password}</td>
-                        <td>{item.usr_cid}</td>
-                        <td>{item.nameDept}</td>
-                        <td>{item.role}</td>
+                        <td>{item.doctor}</td>
+                        <td>{item.tname}</td>
+                        {/* <td>{item.status}</td> */}
                         <td>
-                          {item.usr_status == 1 ? (
+                          {item.status == 'Y' ? (
                             <Switch
                               defaultChecked
-                              onChange={(e) => onChangeStatus(e, item.usr_username)}
+                              onChange={(e) => onChangeStatus(e, item.doctor)}
                             />
                           ) : (
-                            <Switch onChange={(e) => onChangeStatus(e, item.usr_username)} />
+                            <Switch onChange={(e) => onChangeStatus(e, item.doctor)} />
                           )}
                         </td>
                         <td>
                           <div>
                             <button
                               className="btn btn-warning mr-1 mb-2"
-                              onClick={() => onEdit(item.usr_username)}
+                              onClick={() => getDoctorId(item.doctor)}
                             >
                               <Edit className="top-menu__sub-icon " size={14} />
                             </button>
@@ -130,8 +198,61 @@ const DoctorG = () => {
           </div>
         </div>
       </div>
+      <Modal
+        headStyle={{ backgroundColor: "red" }}
+        title={"เพิ่มผู้ใช้งาน"}
+        // centered
+        open={open}
+        onOk={onSubmit}
+        onCancel={onExit}
+        width="50%"
+        className="modalStyle2"
+        okText="บันทึก"
+        cancelText="ยกเลิก"
+      >
+        <div className="modal-body " style={{ marginTop: -30 }}>
+          <div className="intro-y  px-5 pt-0 ">
+            <div className="cols-8  ">
+              <Form
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 14 }}
+                layout="horizontal"
+              // initialValues={{ size: componentSize }}
+              // onValuesChange={onFormLayoutChange}
+              >
+                <Form.Item label="รหัสแพทย์" rules={[{ required: true }]}>
+                  <Input
+                    value={formData.doctor}
+                    onChange={(e) => {
+                      setFormData({ ...formData, doctor: e.target.value });
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item label="ชื่อ-สกุล" rules={[{ required: true }]}>
+                  <Input
+                    value={formData.tname}
+                    onChange={(e) => {
+                      setFormData({ ...formData, tname: e.target.value });
+                    }}
+                  />
+                </Form.Item>
 
-    
+
+
+
+                <Form.Item label="สถานะ">
+                  <Switch
+                    checked={formData.status}
+                    onChange={(e) => onChangeStatus(e)}
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+
     </div>
   )
 }

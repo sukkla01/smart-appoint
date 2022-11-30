@@ -273,7 +273,7 @@ const Xray = (props) => {
                 {/* <div className="mr-3 text-xl"> เลือกรายการ x-ray</div> */}
 
                 <div className="col-span-12 lg:col-span-12 mt-1">
-                  เลือกรายการ   {props.oapp_id}
+                  เลือกรายการ  
                   <Select
                     style={{ width: 280, marginLeft: 5, paddingTop: -50 }}
                     // size='large'
