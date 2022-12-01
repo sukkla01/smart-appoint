@@ -50,7 +50,7 @@ const HistoryVn = (props) => {
         const token = localStorage.getItem("token");
 
         let data = {
-            'oapp_ide': id
+            'oapp_id': id
         }
 
         try {
