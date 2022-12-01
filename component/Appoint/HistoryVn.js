@@ -10,6 +10,8 @@ import jwt_decode from "jwt-decode";
 
 import config from "../../config";
 import PageAppoint from "./PageAppoint";
+import { useRouter } from "next/router";
+import Link from 'next/link'
 
 const BASE_URL = config.BASE_URL;
 
@@ -17,6 +19,7 @@ const BASE_URL = config.BASE_URL;
 const HistoryVn = (props) => {
     const [data, setData] = useState([]);
     const [isModal, setIsModal] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         getHistory()
@@ -47,7 +50,7 @@ const HistoryVn = (props) => {
         const token = localStorage.getItem("token");
 
         let data = {
-            'oapp_id': id
+            'oapp_ide': id
         }
 
         try {
@@ -59,6 +62,17 @@ const HistoryVn = (props) => {
             console.log(error);
         }
     }
+
+    // const onPrint = (oapp_id) => {
+    //     return router.push({
+    //         pathname: 'printAppoint',
+    //         query: {
+    //             oapp_id: oapp_id,
+    //         },
+
+    //     });
+
+    // }
 
     return (
         <div><div className="intro-y overflow-auto lg:overflow-visible mt-2 sm:mt-0">
@@ -122,12 +136,14 @@ const HistoryVn = (props) => {
                                                 />
                                             </button>
                                         </Popconfirm>
-                                        <button className="btn btn-success mr-1 mb-2" onClick={() => setIsModal(true)}>
+
+                                        <Link href="/printAppoint?oapp_ide=3183664" target='_blank'><a target="_blank">   
+                                        <button className="btn btn-success mr-1 mb-2" >
                                             <Printer
                                                 className="top-menu__sub-icon "
                                                 size={14}
                                             />
-                                        </button>
+                                        </button></a></Link>
                                     </div>
 
                                 </td>
