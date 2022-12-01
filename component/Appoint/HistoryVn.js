@@ -137,7 +137,7 @@ const HistoryVn = (props) => {
                                             </button>
                                         </Popconfirm>
 
-                                        <Link href="/printAppoint?oapp_ide=3183664" target='_blank'><a target="_blank">   
+                                        <Link href={`/printAppoint?oapp_ide=${item.oapp_id}`} target='_blank'><a target="_blank">   
                                         <button className="btn btn-success mr-1 mb-2" >
                                             <Printer
                                                 className="top-menu__sub-icon "
