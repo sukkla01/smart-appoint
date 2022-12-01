@@ -374,7 +374,8 @@ const Appoint = () => {
       hn: dataPatient[0].hn,
       user_send: formData.user_send,
       lab: datalab,
-      xray: dataXray
+      xray: dataXray,
+      oapp_id : OappId
     }
 
     console.log(formData)
@@ -613,7 +614,7 @@ const Appoint = () => {
 
       <Modal
         headStyle={{ backgroundColor: "red" }}
-        title={title + ' ' + statusEA}
+        title={title }
         // centered
         open={open}
         onOk={onSubmit}
@@ -646,7 +647,7 @@ const Appoint = () => {
                     HN : {dataPatient.length > 0 ? dataPatient[0].hn : ""}
                   </div>
                   <div className="text-slate-500">
-                    เพศ : {dataPatient.length > 0 ? dataPatient[0].sexname : ""}
+                    เพศ : {dataPatient.length > 0 ? dataPatient[0].sexname : ""} {" "}
                     อายุ : {dataPatient.length > 0 ? dataPatient[0].tage : ""}
                     ปี
                   </div>

@@ -9,7 +9,7 @@ class MyDocument extends Document {
     render() {
         return (
             <Html>
-                <title>CenterSoft</title>
+                <title>smart appoint</title>
                 <Head>
                     <div>
 
