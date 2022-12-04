@@ -3,15 +3,21 @@ import { Search, Bell } from "lucide-react";
 import Menu_ from "./Menu_";
 import Link from "next/link";
 import jwt_decode from "jwt-decode";
+import axios from "axios";
+import config from "../../config";
+
+const BASE_URL = config.BASE_URL;
 
 const Header_ = () => {
   const [profile, setProfile] = useState([]);
+  const [data, setData] = useState([]);
 
   // const  test  = pttype.filter((item)=> item != '02' )
 
   // console.log(test)
   useEffect(() => {
     getProfile();
+    getAlert()
   }, []);
 
   const getProfile = () => {
@@ -28,6 +34,35 @@ const Header_ = () => {
   const onClick = () => {
     // console.log("dd");
   };
+
+  const getAlert = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      let res = await axios.get(`${BASE_URL}/get-alert`, {
+        headers: { token: token },
+      });
+      console.log(res.data)
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onAlert =async()=>{
+
+    const token = localStorage.getItem("token");
+    let data = {
+      oapp_id: '',
+    };
+    try {
+      let res = await axios.post(`${BASE_URL}/update-view-doctor`, data, {
+        headers: { token: token },
+      });
+      // getAlert()
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div>
@@ -213,7 +248,7 @@ const Header_ = () => {
           </div>
           {/* END: Search */}
           {/* BEGIN: Notifications */}
-          <div className="intro-x dropdown mr-4 sm:mr-6">
+          <div className="intro-x dropdown mr-4 sm:mr-6"  >
             <div
               className="dropdown-toggle notification notification--bullet cursor-pointer"
               role="button"
@@ -224,36 +259,39 @@ const Header_ = () => {
                 className="notification__icon dark:text-slate-500"
                 color="white"
                 size={22}
+                onClick={onAlert}
               />
             </div>
             <div className="notification-content pt-2 dropdown-menu">
               <div className="notification-content__box dropdown-content">
                 <div className="notification-content__title">Notifications</div>
-                <div className="cursor-pointer relative flex items-center ">
-                  <div className="w-12 h-12 flex-none image-fit mr-1">
-                    <img
-                      alt="Midone - HTML Admin Template"
-                      className="rounded-full"
-                      src="dist/images/avatar.png"
-                    />
-                    <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
-                  </div>
-                  <div className="ml-2 overflow-hidden">
-                    <div className="flex items-center">
-                      <a href="#" className="font-medium truncate mr-5">
-                        Al Pacino
-                      </a>
-                      <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                        01:10 PM
+                {data.map((item, i) => {
+                  return <div className="cursor-pointer relative flex items-center mt-5">
+                    <div className="w-12 h-12 flex-none image-fit mr-1">
+                      <img
+                        alt="Midone - HTML Admin Template"
+                        className="rounded-full"
+                        src="dist/images/avatar.png"
+                      />
+                      <div className="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white" />
+                    </div>
+                    <div className="ml-2 overflow-hidden">
+                      <div className="flex items-center">
+                        <a href="#" className="font-medium truncate mr-5">
+                        {item.tname}
+                        </a>
+                        <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
+                        {item.cname}
+                        </div>
+                      </div>
+                      <div className="w-full truncate text-slate-500 mt-0.5">
+                       {item.app_user}
                       </div>
                     </div>
-                    <div className="w-full truncate text-slate-500 mt-0.5">
-                      It is a long established fact that a reader will be
-                      distracted by the readable content of a page when looking
-                      at its layout. The point of using Lorem
-                    </div>
                   </div>
-                </div>
+                })}
+
+
               </div>
             </div>
           </div>
@@ -282,7 +320,7 @@ const Header_ = () => {
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />
                 </li>
-              
+
 
                 <li>
                   <hr className="dropdown-divider border-white/[0.08]" />
