@@ -11,11 +11,15 @@ const BASE_URL = config.BASE_URL;
 const Header_ = () => {
   const [profile, setProfile] = useState([]);
   const [data, setData] = useState([]);
+  const [isShowMenu, setIsShowMenu] = useState(false);
 
   // const  test  = pttype.filter((item)=> item != '02' )
 
   // console.log(test)
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const decoded = jwt_decode(token);
+    setIsShowMenu(decoded.role == 'admin' ? true : false)
     getProfile();
     getAlert()
   }, []);
@@ -48,7 +52,7 @@ const Header_ = () => {
     }
   };
 
-  const onAlert =async()=>{
+  const onAlert = async () => {
 
     const token = localStorage.getItem("token");
     let data = {
@@ -249,19 +253,20 @@ const Header_ = () => {
           {/* END: Search */}
           {/* BEGIN: Notifications */}
           <div className="intro-x dropdown mr-4 sm:mr-6"  >
-            <div
-              className="dropdown-toggle notification notification--bullet cursor-pointer"
-              role="button"
-              aria-expanded="false"
-              data-tw-toggle="dropdown"
-            >
-              <Bell
-                className="notification__icon dark:text-slate-500"
-                color="white"
-                size={22}
-                onClick={onAlert}
-              />
-            </div>
+            {isShowMenu ?
+              <div
+                className={`dropdown-toggle notification ${data.length > 0 ? 'notification--bullet' : ""}  cursor-pointer`}
+                role="button"
+                aria-expanded="false"
+                data-tw-toggle="dropdown"
+              >
+                <Bell
+                  className="notification__icon dark:text-slate-500"
+                  color="white"
+                  size={22}
+                  onClick={onAlert}
+                />
+              </div> : ''}
             <div className="notification-content pt-2 dropdown-menu">
               <div className="notification-content__box dropdown-content">
                 <div className="notification-content__title">Notifications</div>
@@ -278,14 +283,14 @@ const Header_ = () => {
                     <div className="ml-2 overflow-hidden">
                       <div className="flex items-center">
                         <a href="#" className="font-medium truncate mr-5">
-                        {item.tname}
+                          {item.tname}
                         </a>
                         <div className="text-xs text-slate-400 ml-auto whitespace-nowrap">
-                        {item.cname}
+                          {item.cname}
                         </div>
                       </div>
                       <div className="w-full truncate text-slate-500 mt-0.5">
-                       {item.app_user}
+                        {item.app_user}
                       </div>
                     </div>
                   </div>
